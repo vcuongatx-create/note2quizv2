@@ -1,9 +1,11 @@
 // ==========================================
-// NOTE2QUIZ - KHÔNG CẦN API KEY
-// Dùng Pollinations legacy endpoint (miễn phí)
+// NOTE2QUIZ - POLLINATIONS API v0.3.0
+// Endpoint mới: gen.pollinations.ai (cần key)
 // ==========================================
 
-const AI_ENDPOINT = "https://text.pollinations.ai";
+const POLLINATIONS_API_KEY = "sk_X08niFv1nHXXe3oxTfmh2QWJnBkbmaqW";
+const POLLINATIONS_URL = "https://gen.pollinations.ai/v1/chat/completions";
+const POLLINATIONS_MODEL = "openai/gpt-5.4-nano";
 
 pdfjsLib.GlobalWorkerOptions.workerSrc =
   "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
@@ -53,32 +55,49 @@ function shuffle(arr) {
   return a;
 }
 
-// ============ GỌI AI — KHÔNG CẦN KEY ============
-async function callAI(prompt, retries = 3) {
+// ============ GỌI AI (ENDPOINT MỚI CÓ KEY) ============
+async function callAI(prompt, retries = 2) {
   for (let i = 0; i <= retries; i++) {
     try {
-      // Dùng GET endpoint đơn giản — không cần key, không cần auth
-      const url = `${AI_ENDPOINT}/${encodeURIComponent(prompt)}?model=openai&seed=${Math.floor(Math.random() * 999999)}`;
-
-      const res = await fetch(url, {
-        method: "GET",
-        headers: { "Accept": "text/plain" }
+      const res = await fetch(POLLINATIONS_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${POLLINATIONS_API_KEY}`
+        },
+        body: JSON.stringify({
+          model: POLLINATIONS_MODEL,
+          messages: [
+            { role: "system", content: "Bạn là trợ lý AI thông minh, luôn trả lời bằng tiếng Việt, chính xác và ngắn gọn." },
+            { role: "user", content: prompt }
+          ],
+          temperature: 0.7
+        })
       });
 
       if (!res.ok) {
-        console.warn(`Lần ${i + 1} lỗi HTTP ${res.status}`);
-        throw new Error(`HTTP ${res.status}`);
+        const errText = await res.text();
+        console.warn(`Lần ${i + 1} lỗi ${res.status}:`, errText.slice(0, 300));
+
+        if (res.status === 401 || res.status === 403) {
+          throw new Error("API key sai hoặc hết hạn. Vào enter.pollinations.ai tạo key mới.");
+        }
+        if (res.status === 402) {
+          throw new Error("Hết Pollen. Vào enter.pollinations.ai → Quests kiếm thêm.");
+        }
+        if (res.status === 429) {
+          throw new Error("AI đang bận. Đợi 30 giây rồi thử lại.");
+        }
+        throw new Error(`HTTP ${res.status}: ${errText.slice(0, 100)}`);
       }
 
-      const text = await res.text();
-      if (!text || text.length < 5) throw new Error("Phản hồi rỗng");
-
+      const data = await res.json();
+      const text = data.choices?.[0]?.message?.content;
+      if (!text || text.length < 5) throw new Error("AI trả lời rỗng.");
       return text;
     } catch (e) {
-      console.warn(`Lần ${i + 1} thất bại:`, e.message);
-      if (i === retries) {
-        throw new Error("AI đang bận, vui lòng thử lại sau vài giây.");
-      }
+      console.warn(`Lần thử ${i + 1} thất bại:`, e.message);
+      if (i === retries) throw new Error(e.message || "AI đang bận, thử lại sau.");
       await new Promise(r => setTimeout(r, 2000 + i * 1000));
     }
   }
