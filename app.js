@@ -1,6 +1,5 @@
 // ==========================================
-// NOTE2QUIZ - POLLINATIONS API v0.3.0
-// Fixed: null-safe DOM access
+// NOTE2QUIZ - FULL FIXED
 // ==========================================
 
 const POLLINATIONS_API_KEY = "sk_X08niFv1nHXXe3oxTfmh2QWJnBkbmaqW";
@@ -16,29 +15,14 @@ let userAnswers = {};
 let score = 0;
 let combo = 0;
 let maxCombo = 0;
-let timerInterval = null;
 let flashcards = [];
 let fcIndex = 0;
 
-// ============ HELPER: Safe DOM ============
-function $(id) {
-  return document.getElementById(id);
-}
-
-function setText(id, text) {
-  const el = $(id);
-  if (el) el.textContent = text;
-}
-
-function setHtml(id, html) {
-  const el = $(id);
-  if (el) el.innerHTML = html;
-}
-
-function setDisplay(id, display) {
-  const el = $(id);
-  if (el) el.style.display = display;
-}
+// Helper
+function $(id) { return document.getElementById(id); }
+function setText(id, text) { const el = $(id); if (el) el.textContent = text; }
+function setHtml(id, html) { const el = $(id); if (el) el.innerHTML = html; }
+function setDisplay(id, d) { const el = $(id); if (el) el.style.display = d; }
 
 function showStatus(id, msg, type = "info") {
   const el = $(id);
@@ -69,7 +53,7 @@ function getStoredQuiz() {
   } catch { return null; }
 }
 
-// ============ TAB SWITCHING (MAIN NAV) ============
+// ============ MAIN TAB SWITCHING ============
 document.querySelectorAll(".nav-btn").forEach(btn => {
   btn.addEventListener("click", () => {
     document.querySelectorAll(".nav-btn").forEach(b => b.classList.remove("active"));
@@ -80,45 +64,59 @@ document.querySelectorAll(".nav-btn").forEach(btn => {
   });
 });
 
-// ============ SUB-NAV (CHỌN GAME) ============
+// ============ SUB-NAV GAME SWITCHING ============
+function activateGame(game) {
+  // Update subnav buttons
+  document.querySelectorAll(".subnav-btn").forEach(b => b.classList.remove("active"));
+  const targetSub = document.querySelector(`.subnav-btn[data-game="${game}"]`);
+  if (targetSub) targetSub.classList.add("active");
+
+  // Show only selected panel
+  document.querySelectorAll(".game-panel").forEach(p => p.style.display = "none");
+  const panel = $("panel-" + game);
+  if (panel) panel.style.display = "block";
+
+  // Init game nếu có quiz
+  const quiz = getStoredQuiz();
+  if (!quiz) return;
+
+  // Delay nhỏ để DOM render xong
+  setTimeout(() => {
+    try {
+      if (game === "snake" && window.SnakeGame) {
+        SnakeGame.init(quiz, "snakeCanvas");
+      } else if (game === "zombie" && window.ZombieGame) {
+        ZombieGame.init(quiz, "zombieCanvas");
+      } else if (game === "runner" && window.RunnerGame) {
+        RunnerGame.init(quiz, "runnerCanvas");
+      } else if (game === "memory" && window.MemoryGame) {
+        MemoryGame.init(quiz);
+      } else if (game === "speed" && window.SpeedGame) {
+        SpeedGame.init(quiz);
+      } else if (game === "quiz") {
+        currentQuiz = quiz;
+        startQuiz();
+      }
+    } catch (err) {
+      console.error("Lỗi init game " + game + ":", err);
+    }
+  }, 150);
+}
+
 document.querySelectorAll(".subnav-btn").forEach(btn => {
   btn.addEventListener("click", () => {
-    document.querySelectorAll(".subnav-btn").forEach(b => b.classList.remove("active"));
-    document.querySelectorAll(".game-panel").forEach(p => p.style.display = "none");
-    btn.classList.add("active");
-    const game = btn.dataset.game;
-    const panel = $("panel-" + game);
-    if (panel) panel.style.display = "block";
-
-    const quiz = getStoredQuiz();
-    if (!quiz) return;
-    setTimeout(() => {
-      try {
-        if (game === "snake" && window.SnakeGame) SnakeGame.init(quiz, "snakeCanvas");
-        else if (game === "zombie" && window.ZombieGame) ZombieGame.init(quiz, "zombieCanvas");
-        else if (game === "runner" && window.RunnerGame) RunnerGame.init(quiz, "runnerCanvas");
-        else if (game === "memory" && window.MemoryGame) MemoryGame.init(quiz);
-        else if (game === "speed" && window.SpeedGame) SpeedGame.init(quiz);
-        else if (game === "quiz") {
-          currentQuiz = quiz;
-          startQuiz();
-        }
-      } catch (err) {
-        console.warn("Lỗi init game:", err);
-      }
-    }, 100);
+    activateGame(btn.dataset.game);
   });
 });
 
-// Chuyển sang game cụ thể
+// Chuyển sang game cụ thể (gọi từ generateQuiz)
 function switchToGame(gameName) {
   const playTabBtn = document.querySelector('[data-tab="play"]');
   if (playTabBtn) playTabBtn.click();
 
   setTimeout(() => {
-    const subBtn = document.querySelector(`.subnav-btn[data-game="${gameName}"]`);
-    if (subBtn) subBtn.click();
-  }, 150);
+    activateGame(gameName);
+  }, 250);
 }
 
 // ============ GỌI AI ============
@@ -203,14 +201,13 @@ async function generateQuiz() {
   const btn = $("generateBtn");
   if (!btn) return;
 
-  // Lấy an toàn các giá trị input
   const numQEl = $("numQuestions");
   const difficultyEl = $("difficulty");
   const selectedGameEl = $("selectedGame");
 
   const numQ = numQEl ? (parseInt(numQEl.value) || 10) : 10;
   const difficulty = difficultyEl ? difficultyEl.value : "trung bình";
-  const selectedGame = selectedGameEl ? selectedGameEl.value : "quiz";
+  const selectedGame = selectedGameEl ? selectedGameEl.value : "snake";
 
   btn.disabled = true;
   btn.innerHTML = '<span class="loader"></span>Đang phân tích...';
@@ -293,26 +290,10 @@ QUY TẮC:
 
     showStatus("generateStatus", `✅ Đã tạo ${quiz.questions.length} câu! Đang vào game...`, "success");
 
-    // TỰ ĐỘNG CHUYỂN SANG GAME
+    // AUTO CHUYỂN SANG GAME
     setTimeout(() => {
       switchToGame(selectedGame);
-
-      setTimeout(() => {
-        try {
-          if (selectedGame === "snake" && window.SnakeGame) SnakeGame.init(quiz, "snakeCanvas");
-          else if (selectedGame === "zombie" && window.ZombieGame) ZombieGame.init(quiz, "zombieCanvas");
-          else if (selectedGame === "runner" && window.RunnerGame) RunnerGame.init(quiz, "runnerCanvas");
-          else if (selectedGame === "memory" && window.MemoryGame) MemoryGame.init(quiz);
-          else if (selectedGame === "speed" && window.SpeedGame) SpeedGame.init(quiz);
-          else if (selectedGame === "quiz") {
-            currentQuiz = quiz;
-            startQuiz();
-          }
-        } catch (err) {
-          console.error("Lỗi khởi tạo game:", err);
-        }
-      }, 250);
-    }, 700);
+    }, 600);
 
   } catch (e) {
     console.error(e);
@@ -375,7 +356,6 @@ function showQuestion(idx) {
 }
 
 function selectAnswer(chosen) {
-  clearInterval(timerInterval);
   const q = currentQuiz.questions[currentIndex];
   const isCorrect = chosen === q.correctIndex;
 
@@ -427,7 +407,7 @@ function showComboPopup(text) {
   popup.className = "combo-popup";
   popup.textContent = text;
   document.body.appendChild(popup);
-  setTimeout(() => popup.remove(), 1000);
+  setTimeout(() => popup.remove(), 1200);
 }
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -445,7 +425,6 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function endGame() {
-  clearInterval(timerInterval);
   setDisplay("quizContainer", "none");
   setDisplay("gameHeader", "none");
   setDisplay("resultCard", "block");
