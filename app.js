@@ -1,12 +1,9 @@
 // ==========================================
-// NOTE2QUIZ - POLLINATIONS AI
+// NOTE2QUIZ - KHÔNG CẦN API KEY
+// Dùng Pollinations legacy endpoint (miễn phí)
 // ==========================================
-// 🔑 DÁN KEY POLLINATIONS CỦA BẠN VÀO ĐÂY:
-// Lấy tại: https://enter.pollinations.ai
-// ==========================================
-const POLLINATIONS_API_KEY = "DÁN_KEY_sk_..._VÀO_ĐÂY";
-const POLLINATIONS_URL = "https://gen.pollinations.ai/v1/chat/completions";
-const POLLINATIONS_MODEL = "openai/gpt-5.4-nano";
+
+const AI_ENDPOINT = "https://text.pollinations.ai";
 
 pdfjsLib.GlobalWorkerOptions.workerSrc =
   "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
@@ -56,48 +53,32 @@ function shuffle(arr) {
   return a;
 }
 
-// ============ GỌI POLLINATIONS API ============
+// ============ GỌI AI — KHÔNG CẦN KEY ============
 async function callAI(prompt, retries = 3) {
-  if (!POLLINATIONS_API_KEY || POLLINATIONS_API_KEY.includes("DÁN_KEY")) {
-    throw new Error("Chưa nhập Pollinations API key. Vào file app.js dòng 5 để dán key.");
-  }
-
   for (let i = 0; i <= retries; i++) {
     try {
-      const res = await fetch(POLLINATIONS_URL, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${POLLINATIONS_API_KEY}`
-        },
-        body: JSON.stringify({
-          model: POLLINATIONS_MODEL,
-          messages: [
-            { role: "system", content: "Bạn là trợ lý AI thông minh, luôn trả lời bằng tiếng Việt, chính xác và ngắn gọn." },
-            { role: "user", content: prompt }
-          ],
-          temperature: 0.7
-        })
+      // Dùng GET endpoint đơn giản — không cần key, không cần auth
+      const url = `${AI_ENDPOINT}/${encodeURIComponent(prompt)}?model=openai&seed=${Math.floor(Math.random() * 999999)}`;
+
+      const res = await fetch(url, {
+        method: "GET",
+        headers: { "Accept": "text/plain" }
       });
 
       if (!res.ok) {
-        const errText = await res.text();
-        console.warn(`Lần ${i + 1} lỗi:`, res.status, errText.slice(0, 200));
-        if (res.status === 401 || res.status === 403) {
-          throw new Error("API key sai hoặc hết hạn. Kiểm tra lại key Pollinations.");
-        }
-        if (res.status === 402) {
-          throw new Error("Hết Pollen. Nạp thêm tại enter.pollinations.ai");
-        }
+        console.warn(`Lần ${i + 1} lỗi HTTP ${res.status}`);
         throw new Error(`HTTP ${res.status}`);
       }
 
-      const data = await res.json();
-      const text = data.choices?.[0]?.message?.content;
+      const text = await res.text();
       if (!text || text.length < 5) throw new Error("Phản hồi rỗng");
+
       return text;
     } catch (e) {
-      if (i === retries) throw new Error("AI đang bận: " + e.message);
+      console.warn(`Lần ${i + 1} thất bại:`, e.message);
+      if (i === retries) {
+        throw new Error("AI đang bận, vui lòng thử lại sau vài giây.");
+      }
       await new Promise(r => setTimeout(r, 2000 + i * 1000));
     }
   }
@@ -187,14 +168,14 @@ async function generateQuiz() {
     showStatus("generateStatus", "🤖 AI đang tạo đề... (10-30 giây)", "info");
 
     const contextPart = sourceText
-      ? `TÀI LIỆU:\n${sourceText.slice(0, 10000)}`
+      ? `TÀI LIỆU:\n${sourceText.slice(0, 8000)}`
       : `CHỦ ĐỀ: ${topic}`;
 
     const prompt = `Tạo ${numQ} câu hỏi trắc nghiệm về ${topic || "nội dung tài liệu"} dưới đây, độ khó ${difficulty}.
 
 ${contextPart}
 
-TRẢ VỀ DUY NHẤT JSON (KHÔNG giải thích, KHÔNG bọc \`\`\`):
+TRẢ VỀ DUY NHẤT JSON (KHÔNG giải thích, KHÔNG bọc dấu \`\`\`):
 {
   "title": "Tiêu đề ngắn",
   "questions": [
@@ -229,7 +210,6 @@ QUY TẮC:
     combo = 0;
     maxCombo = 0;
 
-    // Tạo flashcards từ câu hỏi
     flashcards = quiz.questions.map(q => ({
       front: q.question,
       back: `${q.options[q.correctIndex]}\n\n💡 ${q.explanation || ""}`
@@ -237,7 +217,6 @@ QUY TẮC:
 
     showStatus("generateStatus", `✅ Đã tạo ${quiz.questions.length} câu hỏi!`, "success");
 
-    // Chuyển sang tab chơi
     document.querySelector('[data-tab="quiz"]').click();
     setTimeout(() => startQuiz(), 300);
 
@@ -298,7 +277,6 @@ function showQuestion(idx) {
     opt.addEventListener("click", () => selectAnswer(parseInt(opt.dataset.o)));
   });
 
-  // Survival timer
   if (mode === "survival") {
     timeLeft = 30;
     document.getElementById("timerDisplay").textContent = timeLeft;
@@ -310,7 +288,7 @@ function showQuestion(idx) {
       if (timeLeft <= 10) document.getElementById("timerDisplay").classList.add("warning");
       if (timeLeft <= 0) {
         clearInterval(timerInterval);
-        selectAnswer(-1); // Hết giờ
+        selectAnswer(-1);
       }
     }, 1000);
   }
@@ -321,7 +299,6 @@ function selectAnswer(chosen) {
   const q = currentQuiz.questions[currentIndex];
   const isCorrect = chosen === q.correctIndex;
 
-  // Update UI
   document.querySelectorAll(".option").forEach(opt => {
     opt.classList.add("disabled");
     const oIdx = parseInt(opt.dataset.o);
@@ -337,7 +314,6 @@ function selectAnswer(chosen) {
     <b>Giải thích:</b> ${escapeHtml(q.explanation || "")}
   `;
 
-  // Tính điểm
   if (isCorrect) {
     combo++;
     maxCombo = Math.max(maxCombo, combo);
@@ -350,7 +326,6 @@ function selectAnswer(chosen) {
     }
     score += points;
 
-    // Combo popup
     if (mode === "combo" && combo >= 2) {
       showComboPopup(`x${combo} COMBO! +${points}`);
     }
@@ -370,7 +345,6 @@ function selectAnswer(chosen) {
 
   userAnswers[currentIndex] = chosen;
 
-  // Nút tiếp
   const isLast = currentIndex >= currentQuiz.questions.length - 1;
   document.getElementById(isLast ? "finishBtn" : "nextBtn").style.display = "block";
 }
@@ -418,7 +392,6 @@ function endGame() {
     <small>${correct}/${total} câu đúng (${percent}%) • Combo cao nhất: x${maxCombo}</small>
   `;
 
-  // Rank
   let rank, rankColor;
   if (percent >= 90) { rank = "🏆 THIÊN TÀI"; rankColor = "linear-gradient(135deg, #fbbf24, #f59e0b)"; }
   else if (percent >= 70) { rank = "⭐ GIỎI"; rankColor = "linear-gradient(135deg, #10b981, #059669)"; }
@@ -430,7 +403,6 @@ function endGame() {
   badge.textContent = rank;
   badge.style.background = rankColor;
 
-  // Analysis
   document.getElementById("analysisBox").innerHTML = `
     <b>📊 Phân tích:</b><br/>
     Bạn trả lời đúng <b>${correct}</b>/${total} câu (${percent}%).<br/>
@@ -441,7 +413,6 @@ function endGame() {
       : "📖 Cần ôn lại từ đầu. Đọc lại tài liệu rồi chơi lại nhé!"}
   `;
 
-  // Weak topics
   const weakTopics = Object.entries(topicStats)
     .filter(([_, s]) => s.correct / s.total < 0.7)
     .sort((a, b) => a[1].correct / a[1].total - b[1].correct / b[1].total);
