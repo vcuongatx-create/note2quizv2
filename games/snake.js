@@ -1,24 +1,29 @@
 // ==========================================
-// SNAKE GAME - FIXED KEYBOARD CONTROLS
+// SNAKE GAME - FULLY FIXED KEYBOARD CONTROLS
 // ==========================================
 
 const SnakeGame = {
   canvas: null, ctx: null, snake: [], direction: { x: 1, y: 0 }, nextDirection: { x: 1, y: 0 },
   food: { x: 5, y: 5 }, gridSize: 20, tileSize: 20, score: 0, correctAnswers: 0,
   questions: [], currentQuestion: null, currentQuestionIndex: 0, gameLoop: null,
-  speed: 150, isWaitingAnswer: false, answered: false, _keyBound: false, _mobileBound: false,
-  isRunning: false,
+  speed: 150, isWaitingAnswer: false, answered: false,
+  _keyBound: false, _mobileBound: false, isRunning: false,
 
   init(quiz, canvasId) {
+    console.log("🐍 SnakeGame.init() called");
+
     if (!quiz?.questions?.length) {
-      console.warn("SnakeGame: Không có quiz");
+      console.warn("🐍 Không có quiz");
       return;
     }
+
     this.canvas = document.getElementById(canvasId);
     if (!this.canvas) {
-      console.warn("SnakeGame: Không tìm thấy canvas " + canvasId);
+      console.warn("🐍 Không tìm thấy canvas #" + canvasId);
       return;
     }
+
+    console.log("🐍 Canvas found:", this.canvas);
     this.ctx = this.canvas.getContext("2d");
     this.tileSize = this.canvas.width / this.gridSize;
     this.questions = [...quiz.questions];
@@ -40,12 +45,18 @@ const SnakeGame = {
     this.render();
     this.start();
 
-    // BIND CONTROLS
+    // Bind phím và nút
     this.bindKeyboard();
     this.bindMobile();
 
-    // FOCUS CANVAS
-    setTimeout(() => this.canvas.focus(), 100);
+    // Focus canvas
+    this.canvas.setAttribute("tabindex", "0");
+    setTimeout(() => {
+      try { this.canvas.focus(); } catch(e) {}
+    }, 100);
+    this.canvas.addEventListener("click", () => this.canvas.focus());
+
+    console.log("🐍 Init xong. Sẵn sàng chơi. Bấm phím mũi tên hoặc WASD");
   },
 
   start() {
@@ -62,12 +73,10 @@ const SnakeGame = {
       y: this.snake[0].y + this.direction.y
     };
 
-    // Va chạm tường
     if (head.x < 0 || head.x >= this.gridSize || head.y < 0 || head.y >= this.gridSize) {
       return this.gameOver("Đâm tường!");
     }
 
-    // Va chạm thân
     for (let i = 0; i < this.snake.length; i++) {
       if (this.snake[i].x === head.x && this.snake[i].y === head.y) {
         return this.gameOver("Cắn thân!");
@@ -76,7 +85,6 @@ const SnakeGame = {
 
     this.snake.unshift(head);
 
-    // Ăn táo
     if (head.x === this.food.x && head.y === this.food.y) {
       this.score += 10;
       this.isWaitingAnswer = true;
@@ -143,10 +151,8 @@ const SnakeGame = {
     if (isCorrect) {
       this.correctAnswers++;
       this.score += 20;
-      // Rắn dài thêm (không pop)
       this.speed = Math.max(70, this.speed - 5);
     } else {
-      // Ngắn lại
       if (this.snake.length > 3) this.snake.pop();
     }
 
@@ -172,8 +178,9 @@ const SnakeGame = {
         this.render();
         this.updateHUD();
 
-        // Focus lại canvas sau khi đóng modal
-        setTimeout(() => this.canvas?.focus(), 50);
+        setTimeout(() => {
+          try { this.canvas?.focus(); } catch(e) {}
+        }, 50);
 
         if (this.currentQuestionIndex >= this.questions.length) {
           this.win();
@@ -187,7 +194,6 @@ const SnakeGame = {
     this.ctx.fillStyle = "#0f172a";
     this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
-    // Grid
     this.ctx.strokeStyle = "rgba(99,102,241,0.08)";
     this.ctx.lineWidth = 1;
     for (let i = 0; i <= this.gridSize; i++) {
@@ -201,13 +207,11 @@ const SnakeGame = {
       this.ctx.stroke();
     }
 
-    // Food
     this.ctx.font = `${this.tileSize + 2}px serif`;
     this.ctx.textAlign = "center";
     this.ctx.textBaseline = "middle";
     this.ctx.fillText("🍎", this.food.x * this.tileSize + this.tileSize / 2, this.food.y * this.tileSize + this.tileSize / 2);
 
-    // Snake
     this.snake.forEach((seg, i) => {
       const x = seg.x * this.tileSize;
       const y = seg.y * this.tileSize;
@@ -242,44 +246,41 @@ const SnakeGame = {
     if (sp) sp.textContent = `${Math.round((150 - this.speed) / 10 + 1)}x`;
   },
 
-  // ============ KEYBOARD CONTROLS ============
   bindKeyboard() {
     if (this._keyBound) return;
     this._keyBound = true;
 
+    console.log("🐍 Binding keyboard listener");
+
     document.addEventListener("keydown", (e) => {
-      // Chỉ xử lý khi tab Chơi đang mở và panel snake đang hiện
       const playTab = document.getElementById("tab-play");
-      const panel = document.getElementById("panel-snake");
       if (!playTab?.classList.contains("active")) return;
+
+      const panel = document.getElementById("panel-snake");
       if (!panel || panel.style.display === "none") return;
+
       if (this.isWaitingAnswer) return;
 
       const keyMap = {
-        ArrowUp: { x: 0, y: -1 },
-        ArrowDown: { x: 0, y: 1 },
-        ArrowLeft: { x: -1, y: 0 },
-        ArrowRight: { x: 1, y: 0 },
-        w: { x: 0, y: -1 },
-        W: { x: 0, y: -1 },
-        s: { x: 0, y: 1 },
-        S: { x: 0, y: 1 },
-        a: { x: -1, y: 0 },
-        A: { x: -1, y: 0 },
-        d: { x: 1, y: 0 },
-        D: { x: 1, y: 0 }
+        "ArrowUp": { x: 0, y: -1 },
+        "ArrowDown": { x: 0, y: 1 },
+        "ArrowLeft": { x: -1, y: 0 },
+        "ArrowRight": { x: 1, y: 0 },
+        "w": { x: 0, y: -1 }, "W": { x: 0, y: -1 },
+        "s": { x: 0, y: 1 }, "S": { x: 0, y: 1 },
+        "a": { x: -1, y: 0 }, "A": { x: -1, y: 0 },
+        "d": { x: 1, y: 0 }, "D": { x: 1, y: 0 }
       };
 
       const newDir = keyMap[e.key];
       if (newDir) {
         e.preventDefault();
-        e.stopPropagation();
-        // Không cho quay đầu 180 độ
         if (newDir.x !== -this.direction.x || newDir.y !== -this.direction.y) {
           this.nextDirection = newDir;
+          console.log("🐍 Hướng mới:", newDir);
         }
       }
-    }, true); // useCapture = true để bắt sớm
+    }, true);
   },
 
   bindMobile() {
@@ -287,7 +288,6 @@ const SnakeGame = {
     this._mobileBound = true;
 
     document.querySelectorAll("[data-snake-dir]").forEach(btn => {
-      // Tránh bind nhiều lần
       if (btn.dataset.bound === "1") return;
       btn.dataset.bound = "1";
 
@@ -360,3 +360,4 @@ const SnakeGame = {
 };
 
 window.SnakeGame = SnakeGame;
+console.log("🐍 SnakeGame loaded into window");
