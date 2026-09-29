@@ -58,19 +58,22 @@
           <option value="khó">Khó 🔥</option>
         </select>
       </label>
-      <label>Chế độ Quiz:
-        <select id="gameMode">
-          <option value="classic">🎯 Cổ điển</option>
-          <option value="combo" selected>🔥 Combo</option>
-          <option value="survival">⏱️ Sinh tồn</option>
+      <label>🎮 Chơi trò gì:
+        <select id="selectedGame">
+          <option value="quiz">🎯 Quiz thường</option>
+          <option value="snake" selected>🐍 Rắn săn mồi</option>
+          <option value="zombie">🧟 Bắn Zombie</option>
+          <option value="runner">🏃 Vượt chướng ngại vật</option>
+          <option value="memory">🧩 Ghép cặp</option>
+          <option value="speed">⚡ Đấu trường tốc độ (2 người)</option>
         </select>
       </label>
     </div>
 
-    <button id="generateBtn" class="primary-btn">✨ Tạo đề ngay</button>
+    <button id="generateBtn" class="primary-btn">✨ Tạo đề & Vào game luôn</button>
     <div id="generateStatus" class="status"></div>
     <p class="hint" style="margin-top:16px;text-align:center">
-      Sau khi tạo xong → vào tab <b>🐍 Rắn</b>, <b>🧟 Zombie</b>, <b>🏃 Chạy</b>, <b>🧩 Ghép</b>, <b>⚡ Tốc độ</b> để chơi!
+      💡 Chọn trò chơi ở trên → Bấm tạo → Web tự chuyển vào game đó luôn!
     </p>
   </div>
 </section>
