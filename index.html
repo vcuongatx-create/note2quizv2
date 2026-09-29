@@ -260,7 +260,7 @@
   </div>
 </section>
 
-<!-- MODAL SNAKE -->
+<!-- ==================== MODAL SNAKE ==================== -->
 <div class="modal" id="snakeQuestionModal">
   <div class="modal-content">
     <div class="modal-progress" id="snakeQuestionProgress">Câu 1/10</div>
@@ -274,12 +274,31 @@
   <div class="modal-content">
     <h2 id="snakeGameOverTitle">💀 Game Over</h2>
     <div id="snakeGameOverStats" style="margin:20px 0;font-size:16px;line-height:2"></div>
-    <button onclick="SnakeGame.restart()" class="primary-btn">🔄 Chơi lại</button>
-   <button onclick="SnakeGame.goToGenerate()" class="secondary-btn">✨ Tạo đề mới</button>
+    <button type="button" onclick="SnakeGame.restart()" class="primary-btn">🔄 Chơi lại</button>
+    <button type="button" onclick="closeSnakeModalAndGenerate()" class="secondary-btn">✨ Tạo đề mới</button>
   </div>
 </div>
 
 </main>
+
+<script>
+// Hàm đóng modal + chuyển tab Tạo đề
+function closeSnakeModalAndGenerate() {
+  const modal = document.getElementById("snakeGameOverModal");
+  if (modal) modal.classList.remove("show");
+
+  // Dừng game loop nếu còn chạy
+  if (window.SnakeGame) {
+    if (window.SnakeGame.gameLoop) clearInterval(window.SnakeGame.gameLoop);
+    window.SnakeGame.isRunning = false;
+    window.SnakeGame.isWaitingAnswer = false;
+  }
+
+  // Chuyển tab
+  const genTab = document.querySelector('[data-tab="generate"]');
+  if (genTab) genTab.click();
+}
+</script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
