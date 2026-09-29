@@ -1,13 +1,24 @@
+// ==========================================
+// SNAKE GAME - FIXED KEYBOARD CONTROLS
+// ==========================================
+
 const SnakeGame = {
   canvas: null, ctx: null, snake: [], direction: { x: 1, y: 0 }, nextDirection: { x: 1, y: 0 },
   food: { x: 5, y: 5 }, gridSize: 20, tileSize: 20, score: 0, correctAnswers: 0,
   questions: [], currentQuestion: null, currentQuestionIndex: 0, gameLoop: null,
-  speed: 150, isWaitingAnswer: false, answered: false, _controlsBound: false,
+  speed: 150, isWaitingAnswer: false, answered: false, _keyBound: false, _mobileBound: false,
+  isRunning: false,
 
   init(quiz, canvasId) {
-    if (!quiz?.questions?.length) return;
+    if (!quiz?.questions?.length) {
+      console.warn("SnakeGame: Không có quiz");
+      return;
+    }
     this.canvas = document.getElementById(canvasId);
-    if (!this.canvas) return;
+    if (!this.canvas) {
+      console.warn("SnakeGame: Không tìm thấy canvas " + canvasId);
+      return;
+    }
     this.ctx = this.canvas.getContext("2d");
     this.tileSize = this.canvas.width / this.gridSize;
     this.questions = [...quiz.questions];
@@ -19,13 +30,22 @@ const SnakeGame = {
     this.correctAnswers = 0;
     this.speed = 150;
     this.isWaitingAnswer = false;
-    document.getElementById("snakeGameOverModal").classList.remove("show");
-    document.getElementById("snakeQuestionModal").classList.remove("show");
+    this.isRunning = true;
+
+    document.getElementById("snakeGameOverModal")?.classList.remove("show");
+    document.getElementById("snakeQuestionModal")?.classList.remove("show");
+
     this.spawnFood();
     this.updateHUD();
-    this.start();
-    this.bindControls();
     this.render();
+    this.start();
+
+    // BIND CONTROLS
+    this.bindKeyboard();
+    this.bindMobile();
+
+    // FOCUS CANVAS
+    setTimeout(() => this.canvas.focus(), 100);
   },
 
   start() {
@@ -34,22 +54,29 @@ const SnakeGame = {
   },
 
   tick() {
-    if (this.isWaitingAnswer) return;
+    if (!this.isRunning || this.isWaitingAnswer) return;
+
     this.direction = { ...this.nextDirection };
     const head = {
       x: this.snake[0].x + this.direction.x,
       y: this.snake[0].y + this.direction.y
     };
 
+    // Va chạm tường
     if (head.x < 0 || head.x >= this.gridSize || head.y < 0 || head.y >= this.gridSize) {
       return this.gameOver("Đâm tường!");
     }
-    if (this.snake.some(s => s.x === head.x && s.y === head.y)) {
-      return this.gameOver("Cắn thân!");
+
+    // Va chạm thân
+    for (let i = 0; i < this.snake.length; i++) {
+      if (this.snake[i].x === head.x && this.snake[i].y === head.y) {
+        return this.gameOver("Cắn thân!");
+      }
     }
 
     this.snake.unshift(head);
 
+    // Ăn táo
     if (head.x === this.food.x && head.y === this.food.y) {
       this.score += 10;
       this.isWaitingAnswer = true;
@@ -70,30 +97,36 @@ const SnakeGame = {
         y: Math.floor(Math.random() * this.gridSize)
       };
       tries++;
-    } while (this.snake.some(s => s.x === pos.x && s.y === pos.y) && tries < 200);
+    } while (this.snake.some(s => s.x === pos.x && s.y === pos.y) && tries < 300);
     this.food = pos;
   },
 
   showQuestion() {
-    if (this.currentQuestionIndex >= this.questions.length) { this.win(); return; }
+    if (this.currentQuestionIndex >= this.questions.length) {
+      this.win();
+      return;
+    }
     this.currentQuestion = this.questions[this.currentQuestionIndex];
     this.answered = false;
 
-    document.getElementById("snakeQuestionText").textContent = this.currentQuestion.question;
-    document.getElementById("snakeQuestionProgress").textContent =
-      `Câu ${this.currentQuestionIndex + 1}/${this.questions.length}`;
+    const qText = document.getElementById("snakeQuestionText");
+    const qProg = document.getElementById("snakeQuestionProgress");
+    const qOptions = document.getElementById("snakeOptions");
 
-    const optionsDiv = document.getElementById("snakeOptions");
-    optionsDiv.innerHTML = "";
-    this.currentQuestion.options.forEach((opt, idx) => {
-      const btn = document.createElement("button");
-      btn.className = "snake-option-btn";
-      btn.textContent = `${String.fromCharCode(65 + idx)}. ${opt}`;
-      btn.onclick = () => this.answer(idx);
-      optionsDiv.appendChild(btn);
-    });
+    if (qText) qText.textContent = this.currentQuestion.question;
+    if (qProg) qProg.textContent = `Câu ${this.currentQuestionIndex + 1}/${this.questions.length}`;
+    if (qOptions) {
+      qOptions.innerHTML = "";
+      this.currentQuestion.options.forEach((opt, idx) => {
+        const btn = document.createElement("button");
+        btn.className = "snake-option-btn";
+        btn.textContent = `${String.fromCharCode(65 + idx)}. ${opt}`;
+        btn.onclick = () => this.answer(idx);
+        qOptions.appendChild(btn);
+      });
+    }
 
-    document.getElementById("snakeQuestionModal").classList.add("show");
+    document.getElementById("snakeQuestionModal")?.classList.add("show");
   },
 
   answer(chosenIdx) {
@@ -110,28 +143,41 @@ const SnakeGame = {
     if (isCorrect) {
       this.correctAnswers++;
       this.score += 20;
-      this.speed = Math.max(80, this.speed - 5);
+      // Rắn dài thêm (không pop)
+      this.speed = Math.max(70, this.speed - 5);
     } else {
+      // Ngắn lại
       if (this.snake.length > 3) this.snake.pop();
-      this.speed = Math.max(80, this.speed - 3);
     }
 
     setTimeout(() => {
       const exp = document.getElementById("snakeExplanation");
-      exp.innerHTML = `<b>${isCorrect ? "✅ Đúng!" : "❌ Sai."}</b> Đáp án: <b>${String.fromCharCode(65 + this.currentQuestion.correctIndex)}</b><br/>${this.currentQuestion.explanation || ""}`;
-      exp.classList.add("show");
+      if (exp) {
+        exp.innerHTML = `<b>${isCorrect ? "✅ Đúng!" : "❌ Sai."}</b> Đáp án: <b>${String.fromCharCode(65 + this.currentQuestion.correctIndex)}</b><br/>${this.currentQuestion.explanation || ""}`;
+        exp.classList.add("show");
+      }
 
       setTimeout(() => {
-        document.getElementById("snakeQuestionModal").classList.remove("show");
-        exp.classList.remove("show");
-        exp.innerHTML = "";
+        document.getElementById("snakeQuestionModal")?.classList.remove("show");
+        const exp2 = document.getElementById("snakeExplanation");
+        if (exp2) {
+          exp2.classList.remove("show");
+          exp2.innerHTML = "";
+        }
+
         this.currentQuestionIndex++;
         this.isWaitingAnswer = false;
         this.spawnFood();
+        this.start();
         this.render();
         this.updateHUD();
 
-        if (this.currentQuestionIndex >= this.questions.length) this.win();
+        // Focus lại canvas sau khi đóng modal
+        setTimeout(() => this.canvas?.focus(), 50);
+
+        if (this.currentQuestionIndex >= this.questions.length) {
+          this.win();
+        }
       }, 1500);
     }, 400);
   },
@@ -141,6 +187,7 @@ const SnakeGame = {
     this.ctx.fillStyle = "#0f172a";
     this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
+    // Grid
     this.ctx.strokeStyle = "rgba(99,102,241,0.08)";
     this.ctx.lineWidth = 1;
     for (let i = 0; i <= this.gridSize; i++) {
@@ -154,11 +201,13 @@ const SnakeGame = {
       this.ctx.stroke();
     }
 
-    this.ctx.font = `${this.tileSize - 2}px serif`;
+    // Food
+    this.ctx.font = `${this.tileSize + 2}px serif`;
     this.ctx.textAlign = "center";
     this.ctx.textBaseline = "middle";
     this.ctx.fillText("🍎", this.food.x * this.tileSize + this.tileSize / 2, this.food.y * this.tileSize + this.tileSize / 2);
 
+    // Snake
     this.snake.forEach((seg, i) => {
       const x = seg.x * this.tileSize;
       const y = seg.y * this.tileSize;
@@ -169,10 +218,10 @@ const SnakeGame = {
         this.ctx.fill();
         this.ctx.fillStyle = "white";
         this.ctx.beginPath();
-        this.ctx.arc(x + this.tileSize * 0.65, y + this.tileSize * 0.4, 2, 0, Math.PI * 2);
+        this.ctx.arc(x + this.tileSize * 0.7, y + this.tileSize * 0.35, 2.5, 0, Math.PI * 2);
         this.ctx.fill();
         this.ctx.beginPath();
-        this.ctx.arc(x + this.tileSize * 0.65, y + this.tileSize * 0.65, 2, 0, Math.PI * 2);
+        this.ctx.arc(x + this.tileSize * 0.7, y + this.tileSize * 0.7, 2.5, 0, Math.PI * 2);
         this.ctx.fill();
       } else {
         const gradient = i / this.snake.length;
@@ -193,38 +242,67 @@ const SnakeGame = {
     if (sp) sp.textContent = `${Math.round((150 - this.speed) / 10 + 1)}x`;
   },
 
-  bindControls() {
-    if (this._controlsBound) return;
-    this._controlsBound = true;
+  // ============ KEYBOARD CONTROLS ============
+  bindKeyboard() {
+    if (this._keyBound) return;
+    this._keyBound = true;
 
     document.addEventListener("keydown", (e) => {
-      if (!document.getElementById("tab-snake")?.classList.contains("active")) return;
+      // Chỉ xử lý khi tab Chơi đang mở và panel snake đang hiện
+      const playTab = document.getElementById("tab-play");
+      const panel = document.getElementById("panel-snake");
+      if (!playTab?.classList.contains("active")) return;
+      if (!panel || panel.style.display === "none") return;
       if (this.isWaitingAnswer) return;
 
-      const dirs = {
-        ArrowUp: { x: 0, y: -1 }, ArrowDown: { x: 0, y: 1 },
-        ArrowLeft: { x: -1, y: 0 }, ArrowRight: { x: 1, y: 0 },
-        w: { x: 0, y: -1 }, s: { x: 0, y: 1 }, a: { x: -1, y: 0 }, d: { x: 1, y: 0 }
+      const keyMap = {
+        ArrowUp: { x: 0, y: -1 },
+        ArrowDown: { x: 0, y: 1 },
+        ArrowLeft: { x: -1, y: 0 },
+        ArrowRight: { x: 1, y: 0 },
+        w: { x: 0, y: -1 },
+        W: { x: 0, y: -1 },
+        s: { x: 0, y: 1 },
+        S: { x: 0, y: 1 },
+        a: { x: -1, y: 0 },
+        A: { x: -1, y: 0 },
+        d: { x: 1, y: 0 },
+        D: { x: 1, y: 0 }
       };
-      const newDir = dirs[e.key];
+
+      const newDir = keyMap[e.key];
       if (newDir) {
         e.preventDefault();
+        e.stopPropagation();
+        // Không cho quay đầu 180 độ
         if (newDir.x !== -this.direction.x || newDir.y !== -this.direction.y) {
           this.nextDirection = newDir;
         }
       }
-    });
+    }, true); // useCapture = true để bắt sớm
+  },
+
+  bindMobile() {
+    if (this._mobileBound) return;
+    this._mobileBound = true;
 
     document.querySelectorAll("[data-snake-dir]").forEach(btn => {
-      btn.addEventListener("click", () => {
+      // Tránh bind nhiều lần
+      if (btn.dataset.bound === "1") return;
+      btn.dataset.bound = "1";
+
+      btn.addEventListener("click", (e) => {
+        e.preventDefault();
         if (this.isWaitingAnswer) return;
         const dir = btn.dataset.snakeDir;
         const dirs = {
-          up: { x: 0, y: -1 }, down: { x: 0, y: 1 },
-          left: { x: -1, y: 0 }, right: { x: 1, y: 0 }
+          up: { x: 0, y: -1 },
+          down: { x: 0, y: 1 },
+          left: { x: -1, y: 0 },
+          right: { x: 1, y: 0 }
         };
         const newDir = dirs[dir];
-        if (newDir.x !== -this.direction.x || newDir.y !== -this.direction.y) {
+        if (newDir && (newDir.x !== -this.direction.x || newDir.y !== -this.direction.y)) {
           this.nextDirection = newDir;
         }
       });
@@ -233,37 +311,46 @@ const SnakeGame = {
 
   gameOver(reason) {
     clearInterval(this.gameLoop);
+    this.isRunning = false;
     this.isWaitingAnswer = true;
+
     const total = this.questions.length;
     const percent = Math.round((this.correctAnswers / total) * 100);
 
-    document.getElementById("snakeGameOverTitle").textContent = `💀 ${reason}`;
-    document.getElementById("snakeGameOverStats").innerHTML = `
+    const title = document.getElementById("snakeGameOverTitle");
+    const stats = document.getElementById("snakeGameOverStats");
+    if (title) title.textContent = `💀 ${reason}`;
+    if (stats) stats.innerHTML = `
       🏆 Điểm: <b>${this.score}</b><br/>
       ✅ Đúng: <b>${this.correctAnswers}/${total}</b> (${percent}%)<br/>
       🐍 Dài: <b>${this.snake.length}</b> đốt<br/>
       🎯 Đã làm: <b>${this.currentQuestionIndex}/${total}</b> câu
     `;
-    document.getElementById("snakeGameOverModal").classList.add("show");
+    document.getElementById("snakeGameOverModal")?.classList.add("show");
   },
 
   win() {
     clearInterval(this.gameLoop);
+    this.isRunning = false;
     this.isWaitingAnswer = true;
+
     const total = this.questions.length;
     const percent = Math.round((this.correctAnswers / total) * 100);
     let rank = percent >= 90 ? "🏆 THIÊN TÀI" : percent >= 70 ? "⭐ GIỎI" : percent >= 50 ? "💪 KHÁ" : "📖 CẦN CỐ";
 
-    document.getElementById("snakeGameOverTitle").textContent = `🎉 HOÀN THÀNH! ${rank}`;
-    document.getElementById("snakeGameOverStats").innerHTML = `
+    const title = document.getElementById("snakeGameOverTitle");
+    const stats = document.getElementById("snakeGameOverStats");
+    if (title) title.textContent = `🎉 HOÀN THÀNH! ${rank}`;
+    if (stats) stats.innerHTML = `
       🏆 Điểm: <b>${this.score}</b><br/>
       ✅ Đúng: <b>${this.correctAnswers}/${total}</b> (${percent}%)<br/>
       🐍 Dài: <b>${this.snake.length}</b> đốt
     `;
-    document.getElementById("snakeGameOverModal").classList.add("show");
+    document.getElementById("snakeGameOverModal")?.classList.add("show");
   },
 
   restart() {
+    document.getElementById("snakeGameOverModal")?.classList.remove("show");
     const quiz = (() => {
       try { return JSON.parse(sessionStorage.getItem("n2q_currentQuiz")); }
       catch { return null; }
