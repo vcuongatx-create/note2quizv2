@@ -13,12 +13,7 @@
   <div class="logo">🎮 Note2Quiz</div>
   <nav>
     <button class="nav-btn active" data-tab="generate">📥 Tạo đề</button>
-    <button class="nav-btn" data-tab="quiz">🎯 Quiz</button>
-    <button class="nav-btn" data-tab="snake">🐍 Rắn</button>
-    <button class="nav-btn" data-tab="zombie">🧟 Zombie</button>
-    <button class="nav-btn" data-tab="runner">🏃 Chạy</button>
-    <button class="nav-btn" data-tab="memory">🧩 Ghép</button>
-    <button class="nav-btn" data-tab="speed">⚡ Tốc độ</button>
+    <button class="nav-btn" data-tab="play">🎮 Chơi</button>
     <button class="nav-btn" data-tab="flashcard">🃏 Flashcard</button>
     <button class="nav-btn" data-tab="chat">💬 Hỏi AI</button>
   </nav>
@@ -78,149 +73,145 @@
   </div>
 </section>
 
-<!-- ==================== TAB: QUIZ THƯỜNG ==================== -->
-<section id="tab-quiz" class="tab">
-  <div id="quizEmpty" class="card empty">
-    <h2>🎮 Chưa có đề nào</h2>
-    <p>Vào tab <b>Tạo đề</b> để sinh bài kiểm tra trước nhé!</p>
-  </div>
+<!-- ==================== TAB: CHƠI (chứa tất cả game) ==================== -->
+<section id="tab-play" class="tab">
 
-  <div id="gameHeader" class="game-header" style="display:none">
-    <div class="stat"><span class="stat-label">Điểm</span><span class="stat-value" id="scoreDisplay">0</span></div>
-    <div class="stat"><span class="stat-label">Combo</span><span class="stat-value" id="comboDisplay">x1</span></div>
-    <div class="stat"><span class="stat-label">Câu</span><span class="stat-value" id="questionCounter">1/10</span></div>
-    <div class="stat" id="timerStat" style="display:none">
-      <span class="stat-label">⏱️</span><span class="stat-value" id="timerDisplay">30</span>
+  <!-- Sub-nav chọn game -->
+  <div class="card" style="padding:16px">
+    <div class="subnav">
+      <button class="subnav-btn active" data-game="quiz">🎯 Quiz</button>
+      <button class="subnav-btn" data-game="snake">🐍 Rắn</button>
+      <button class="subnav-btn" data-game="zombie">🧟 Zombie</button>
+      <button class="subnav-btn" data-game="runner">🏃 Chạy</button>
+      <button class="subnav-btn" data-game="memory">🧩 Ghép</button>
+      <button class="subnav-btn" data-game="speed">⚡ Tốc độ</button>
     </div>
   </div>
 
-  <div id="quizContainer" style="display:none">
+  <!-- QUIZ -->
+  <div class="game-panel" id="panel-quiz">
+    <div id="quizEmpty" class="card empty">
+      <h2>🎮 Chưa có đề</h2>
+      <p>Vào tab <b>Tạo đề</b> để sinh bài kiểm tra trước nhé!</p>
+    </div>
+
+    <div id="gameHeader" class="game-header" style="display:none">
+      <div class="stat"><span class="stat-label">Điểm</span><span class="stat-value" id="scoreDisplay">0</span></div>
+      <div class="stat"><span class="stat-label">Combo</span><span class="stat-value" id="comboDisplay">x1</span></div>
+      <div class="stat"><span class="stat-label">Câu</span><span class="stat-value" id="questionCounter">1/10</span></div>
+    </div>
+
+    <div id="quizContainer" style="display:none">
+      <div class="card">
+        <div id="questionArea"></div>
+        <div class="quiz-actions">
+          <button id="nextBtn" class="primary-btn" style="display:none">Câu tiếp →</button>
+          <button id="finishBtn" class="primary-btn" style="display:none">🏁 Xem kết quả</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="resultCard" class="card" style="display:none">
+      <h2>🏆 Kết quả</h2>
+      <div id="finalScore" class="score"></div>
+      <div id="rankBadge" class="rank-badge"></div>
+      <div id="analysisBox"></div>
+      <div id="weakTopicsBox"></div>
+      <button id="replayBtn" class="secondary-btn" style="margin-top:20px">🔄 Chơi lại</button>
+      <button id="newQuizBtn" class="secondary-btn">✨ Tạo đề mới</button>
+    </div>
+  </div>
+
+  <!-- SNAKE -->
+  <div class="game-panel" id="panel-snake" style="display:none">
     <div class="card">
-      <div id="questionArea"></div>
-      <div class="quiz-actions">
-        <button id="nextBtn" class="primary-btn" style="display:none">Câu tiếp →</button>
-        <button id="finishBtn" class="primary-btn" style="display:none">🏁 Xem kết quả</button>
+      <h2>🐍 Rắn săn mồi</h2>
+      <p class="hint">Ăn 🍎 để hiện câu hỏi. Đúng → rắn dài + nhanh. Sai → rắn ngắn lại.</p>
+      <div class="game-hud">
+        <div class="hud-item"><span>Điểm</span><b id="snakeScore">0</b></div>
+        <div class="hud-item"><span>Dài</span><b id="snakeLength">3</b></div>
+        <div class="hud-item"><span>Đúng</span><b id="snakeCorrect">0/0</b></div>
+        <div class="hud-item"><span>Tốc độ</span><b id="snakeSpeed">1x</b></div>
       </div>
-    </div>
-  </div>
-
-  <div id="resultCard" class="card" style="display:none">
-    <h2>🏆 Kết quả</h2>
-    <div id="finalScore" class="score"></div>
-    <div id="rankBadge" class="rank-badge"></div>
-    <div id="analysisBox"></div>
-    <div id="weakTopicsBox"></div>
-    <button id="replayBtn" class="secondary-btn" style="margin-top:20px">🔄 Chơi lại</button>
-    <button id="newQuizBtn" class="secondary-btn">✨ Tạo đề mới</button>
-  </div>
-</section>
-
-<!-- ==================== TAB: RẮN ==================== -->
-<section id="tab-snake" class="tab">
-  <div class="card">
-    <h2>🐍 Rắn săn mồi</h2>
-    <p class="hint">Ăn 🍎 để hiện câu hỏi. Đúng → rắn dài + nhanh. Sai → rắn ngắn lại.</p>
-    <div class="game-hud">
-      <div class="hud-item"><span>Điểm</span><b id="snakeScore">0</b></div>
-      <div class="hud-item"><span>Dài</span><b id="snakeLength">3</b></div>
-      <div class="hud-item"><span>Đúng</span><b id="snakeCorrect">0/0</b></div>
-      <div class="hud-item"><span>Tốc độ</span><b id="snakeSpeed">1x</b></div>
-    </div>
-    <div class="snake-container">
-      <canvas id="snakeCanvas" width="400" height="400"></canvas>
-    </div>
-    <div class="snake-mobile-controls">
-      <button data-snake-dir="up">⬆️</button>
-      <div>
-        <button data-snake-dir="left">⬅️</button>
-        <button data-snake-dir="down">⬇️</button>
-        <button data-snake-dir="right">➡️</button>
+      <div class="snake-container">
+        <canvas id="snakeCanvas" width="400" height="400"></canvas>
       </div>
+      <div class="snake-mobile-controls">
+        <button data-snake-dir="up">⬆️</button>
+        <div>
+          <button data-snake-dir="left">⬅️</button>
+          <button data-snake-dir="down">⬇️</button>
+          <button data-snake-dir="right">➡️</button>
+        </div>
+      </div>
+      <p class="hint" style="text-align:center;margin-top:12px">🎮 Desktop: mũi tên / WASD • Mobile: nút trên</p>
     </div>
-    <p class="hint" style="text-align:center;margin-top:12px">🎮 Desktop: mũi tên / WASD • Mobile: nút trên</p>
   </div>
 
-  <div class="modal" id="snakeQuestionModal">
-    <div class="modal-content">
-      <div class="modal-progress" id="snakeQuestionProgress">Câu 1/10</div>
-      <h3 id="snakeQuestionText"></h3>
-      <div id="snakeOptions" class="snake-options"></div>
-      <div id="snakeExplanation" class="explanation"></div>
+  <!-- ZOMBIE -->
+  <div class="game-panel" id="panel-zombie" style="display:none">
+    <div class="card">
+      <h2>🧟 Bắn Zombie</h2>
+      <p class="hint">Zombie tiến vào từ phải. Bắn đúng đáp án để tiêu diệt chúng!</p>
+      <div class="game-hud">
+        <div class="hud-item"><span>Điểm</span><b id="zombieScore">0</b></div>
+        <div class="hud-item"><span>Mạng</span><b id="zombieLives">❤️❤️❤️</b></div>
+        <div class="hud-item"><span>Đúng</span><b id="zombieCorrect">0/0</b></div>
+        <div class="hud-item"><span>Wave</span><b id="zombieWave">1</b></div>
+      </div>
+      <div class="zombie-container">
+        <canvas id="zombieCanvas" width="800" height="350"></canvas>
+      </div>
+      <div id="zombieQuestionArea" class="zombie-question-area"></div>
     </div>
   </div>
 
-  <div class="modal" id="snakeGameOverModal">
-    <div class="modal-content">
-      <h2 id="snakeGameOverTitle">💀 Game Over</h2>
-      <div id="snakeGameOverStats" style="margin:20px 0;font-size:16px;line-height:2"></div>
-      <button onclick="SnakeGame.restart()" class="primary-btn">🔄 Chơi lại</button>
-      <button onclick="document.querySelector('[data-tab=&quot;generate&quot;]').click()" class="secondary-btn">✨ Tạo đề mới</button>
+  <!-- RUNNER -->
+  <div class="game-panel" id="panel-runner" style="display:none">
+    <div class="card">
+      <h2>🏃 Vượt chướng ngại vật</h2>
+      <p class="hint">Nhân vật chạy tự động. Gặp vật cản → chọn đáp án đúng để nhảy qua!</p>
+      <div class="game-hud">
+        <div class="hud-item"><span>Điểm</span><b id="runnerScore">0</b></div>
+        <div class="hud-item"><span>Khoảng cách</span><b id="runnerDistance">0m</b></div>
+        <div class="hud-item"><span>Mạng</span><b id="runnerLives">❤️❤️❤️</b></div>
+        <div class="hud-item"><span>Đúng</span><b id="runnerCorrect">0/0</b></div>
+      </div>
+      <div class="runner-container">
+        <canvas id="runnerCanvas" width="800" height="300"></canvas>
+      </div>
+      <div id="runnerQuestionArea" class="runner-question-area"></div>
     </div>
   </div>
-</section>
 
-<!-- ==================== TAB: ZOMBIE ==================== -->
-<section id="tab-zombie" class="tab">
-  <div class="card">
-    <h2>🧟 Bắn Zombie</h2>
-    <p class="hint">Zombie tiến vào từ phải. Bắn đúng đáp án để tiêu diệt chúng!</p>
-    <div class="game-hud">
-      <div class="hud-item"><span>Điểm</span><b id="zombieScore">0</b></div>
-      <div class="hud-item"><span>Mạng</span><b id="zombieLives">❤️❤️❤️</b></div>
-      <div class="hud-item"><span>Đúng</span><b id="zombieCorrect">0/0</b></div>
-      <div class="hud-item"><span>Wave</span><b id="zombieWave">1</b></div>
+  <!-- MEMORY -->
+  <div class="game-panel" id="panel-memory" style="display:none">
+    <div class="card">
+      <h2>🧩 Ghép cặp</h2>
+      <p class="hint">Lật thẻ để ghép Câu hỏi ↔ Đáp án. Càng nhanh càng nhiều điểm!</p>
+      <div class="game-hud">
+        <div class="hud-item"><span>Điểm</span><b id="memoryScore">0</b></div>
+        <div class="hud-item"><span>Lượt</span><b id="memoryMoves">0</b></div>
+        <div class="hud-item"><span>Thời gian</span><b id="memoryTime">0s</b></div>
+        <div class="hud-item"><span>Cặp</span><b id="memoryPairs">0/0</b></div>
+      </div>
+      <div id="memoryGrid" class="memory-grid"></div>
     </div>
-    <div class="zombie-container">
-      <canvas id="zombieCanvas" width="800" height="350"></canvas>
-    </div>
-    <div id="zombieQuestionArea" class="zombie-question-area"></div>
   </div>
-</section>
 
-<!-- ==================== TAB: RUNNER ==================== -->
-<section id="tab-runner" class="tab">
-  <div class="card">
-    <h2>🏃 Vượt chướng ngại vật</h2>
-    <p class="hint">Nhân vật chạy tự động. Gặp vật cản → chọn đáp án đúng để nhảy qua!</p>
-    <div class="game-hud">
-      <div class="hud-item"><span>Điểm</span><b id="runnerScore">0</b></div>
-      <div class="hud-item"><span>Khoảng cách</span><b id="runnerDistance">0m</b></div>
-      <div class="hud-item"><span>Mạng</span><b id="runnerLives">❤️❤️❤️</b></div>
-      <div class="hud-item"><span>Đúng</span><b id="runnerCorrect">0/0</b></div>
+  <!-- SPEED -->
+  <div class="game-panel" id="panel-speed" style="display:none">
+    <div class="card">
+      <h2>⚡ Đấu trường tốc độ</h2>
+      <p class="hint">2 người cùng máy. Ai bấm nhanh hơn + đúng → giành điểm!</p>
+      <div class="speed-scores">
+        <div class="speed-player p1"><span>🔵 P1</span><b id="speedP1Score">0</b><small>A / S / D / F</small></div>
+        <div class="speed-player p2"><span>🔴 P2</span><b id="speedP2Score">0</b><small>J / K / L / ;</small></div>
+      </div>
+      <div id="speedQuestionArea" class="speed-question-area"></div>
     </div>
-    <div class="runner-container">
-      <canvas id="runnerCanvas" width="800" height="300"></canvas>
-    </div>
-    <div id="runnerQuestionArea" class="runner-question-area"></div>
   </div>
-</section>
 
-<!-- ==================== TAB: MEMORY ==================== -->
-<section id="tab-memory" class="tab">
-  <div class="card">
-    <h2>🧩 Ghép cặp</h2>
-    <p class="hint">Lật thẻ để ghép Câu hỏi ↔ Đáp án. Càng nhanh càng nhiều điểm!</p>
-    <div class="game-hud">
-      <div class="hud-item"><span>Điểm</span><b id="memoryScore">0</b></div>
-      <div class="hud-item"><span>Lượt</span><b id="memoryMoves">0</b></div>
-      <div class="hud-item"><span>Thời gian</span><b id="memoryTime">0s</b></div>
-      <div class="hud-item"><span>Cặp</span><b id="memoryPairs">0/0</b></div>
-    </div>
-    <div id="memoryGrid" class="memory-grid"></div>
-  </div>
-</section>
-
-<!-- ==================== TAB: SPEED ==================== -->
-<section id="tab-speed" class="tab">
-  <div class="card">
-    <h2>⚡ Đấu trường tốc độ</h2>
-    <p class="hint">2 người cùng máy. Ai bấm nhanh hơn + đúng → giành điểm!</p>
-    <div class="speed-scores">
-      <div class="speed-player p1"><span>🔵 P1</span><b id="speedP1Score">0</b><small>A / S / D / F</small></div>
-      <div class="speed-player p2"><span>🔴 P2</span><b id="speedP2Score">0</b><small>J / K / L / ;</small></div>
-    </div>
-    <div id="speedQuestionArea" class="speed-question-area"></div>
-  </div>
 </section>
 
 <!-- ==================== TAB: FLASHCARD ==================== -->
@@ -259,6 +250,25 @@
     </div>
   </div>
 </section>
+
+<!-- ==================== MODAL SNAKE ==================== -->
+<div class="modal" id="snakeQuestionModal">
+  <div class="modal-content">
+    <div class="modal-progress" id="snakeQuestionProgress">Câu 1/10</div>
+    <h3 id="snakeQuestionText"></h3>
+    <div id="snakeOptions" class="snake-options"></div>
+    <div id="snakeExplanation" class="explanation"></div>
+  </div>
+</div>
+
+<div class="modal" id="snakeGameOverModal">
+  <div class="modal-content">
+    <h2 id="snakeGameOverTitle">💀 Game Over</h2>
+    <div id="snakeGameOverStats" style="margin:20px 0;font-size:16px;line-height:2"></div>
+    <button onclick="SnakeGame.restart()" class="primary-btn">🔄 Chơi lại</button>
+    <button onclick="document.querySelector('[data-tab=&quot;generate&quot;]').click()" class="secondary-btn">✨ Tạo đề mới</button>
+  </div>
+</div>
 
 </main>
 
