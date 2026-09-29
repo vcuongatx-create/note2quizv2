@@ -358,6 +358,28 @@ const SnakeGame = {
     if (quiz) this.init(quiz, "snakeCanvas");
   }
 };
+  restart() {
+    document.getElementById("snakeGameOverModal")?.classList.remove("show");
+    const quiz = (() => {
+      try { return JSON.parse(sessionStorage.getItem("n2q_currentQuiz")); }
+      catch { return null; }
+    })();
+    if (quiz) this.init(quiz, "snakeCanvas");
+  },
+
+  // ⭐ THÊM HÀM NÀY
+  goToGenerate() {
+    // 1. Đóng modal Game Over
+    document.getElementById("snakeGameOverModal")?.classList.remove("show");
+    // 2. Dừng game loop
+    clearInterval(this.gameLoop);
+    this.isRunning = false;
+    this.isWaitingAnswer = false;
+    // 3. Chuyển sang tab Tạo đề
+    const genTab = document.querySelector('[data-tab="generate"]');
+    if (genTab) genTab.click();
+  }
+};
 
 window.SnakeGame = SnakeGame;
 console.log("🐍 SnakeGame loaded into window");
