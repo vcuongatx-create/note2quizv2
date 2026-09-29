@@ -15,31 +15,44 @@ let userAnswers = {};
 let score = 0;
 let combo = 0;
 let maxCombo = 0;
-let mode = "combo";
 let timerInterval = null;
 let timeLeft = 30;
 let flashcards = [];
 let fcIndex = 0;
 
-// ============ TAB SWITCHING ============
+// ============ TAB SWITCHING (MAIN) ============
 document.querySelectorAll(".nav-btn").forEach(btn => {
   btn.addEventListener("click", () => {
     document.querySelectorAll(".nav-btn").forEach(b => b.classList.remove("active"));
     document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
     btn.classList.add("active");
     document.getElementById("tab-" + btn.dataset.tab).classList.add("active");
+  });
+});
 
-    // Auto init game khi bấm tab (chỉ khi đã có quiz)
+// ============ SUB-NAV GAME SWITCHING ============
+document.querySelectorAll(".subnav-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".subnav-btn").forEach(b => b.classList.remove("active"));
+    document.querySelectorAll(".game-panel").forEach(p => p.style.display = "none");
+    btn.classList.add("active");
+    const game = btn.dataset.game;
+    document.getElementById("panel-" + game).style.display = "block";
+
+    // Init game khi chọn
     const quiz = getStoredQuiz();
     if (!quiz) return;
-    const tab = btn.dataset.tab;
     setTimeout(() => {
       try {
-        if (tab === "snake" && window.SnakeGame) SnakeGame.init(quiz, "snakeCanvas");
-        if (tab === "zombie" && window.ZombieGame) ZombieGame.init(quiz, "zombieCanvas");
-        if (tab === "runner" && window.RunnerGame) RunnerGame.init(quiz, "runnerCanvas");
-        if (tab === "memory" && window.MemoryGame) MemoryGame.init(quiz);
-        if (tab === "speed" && window.SpeedGame) SpeedGame.init(quiz);
+        if (game === "snake" && window.SnakeGame) SnakeGame.init(quiz, "snakeCanvas");
+        else if (game === "zombie" && window.ZombieGame) ZombieGame.init(quiz, "zombieCanvas");
+        else if (game === "runner" && window.RunnerGame) RunnerGame.init(quiz, "runnerCanvas");
+        else if (game === "memory" && window.MemoryGame) MemoryGame.init(quiz);
+        else if (game === "speed" && window.SpeedGame) SpeedGame.init(quiz);
+        else if (game === "quiz") {
+          currentQuiz = quiz;
+          startQuiz();
+        }
       } catch (err) {
         console.warn("Lỗi init game:", err);
       }
@@ -54,9 +67,23 @@ function getStoredQuiz() {
   } catch { return null; }
 }
 
+// Hàm chuyển sang game cụ thể
+function switchToGame(gameName) {
+  // Chuyển sang tab "play" trước
+  document.querySelectorAll(".nav-btn").forEach(b => b.classList.remove("active"));
+  document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+  document.querySelector('[data-tab="play"]').classList.add("active");
+  document.getElementById("tab-play").classList.add("active");
+
+  // Sau đó chọn sub-nav game
+  const subBtn = document.querySelector(`.subnav-btn[data-game="${gameName}"]`);
+  if (subBtn) subBtn.click();
+}
+
 // ============ UTILS ============
 function showStatus(id, msg, type = "info") {
   const el = document.getElementById(id);
+  if (!el) return;
   el.textContent = msg;
   el.className = "status " + type;
 }
@@ -149,10 +176,14 @@ async function extractTextFromFile(file) {
 }
 
 // ============ TẠO ĐỀ ============
-document.getElementById("generateBtn").addEventListener("click", generateQuiz);
+const generateBtn = document.getElementById("generateBtn");
+if (generateBtn) {
+  generateBtn.addEventListener("click", generateQuiz);
+}
 
 async function generateQuiz() {
   const btn = document.getElementById("generateBtn");
+  if (!btn) return;
   btn.disabled = true;
   btn.innerHTML = '<span class="loader"></span>Đang phân tích...';
   showStatus("generateStatus", "⏳ Đang xử lý...", "info");
@@ -161,7 +192,6 @@ async function generateQuiz() {
     const numQ = parseInt(document.getElementById("numQuestions").value) || 10;
     const difficulty = document.getElementById("difficulty").value;
     const selectedGame = document.getElementById("selectedGame").value;
-    mode = "combo";
 
     let sourceText = "";
     const files = document.getElementById("fileInput").files;
@@ -229,40 +259,32 @@ QUY TẮC:
       back: `${q.options[q.correctIndex]}\n\n💡 ${q.explanation || ""}`
     }));
 
-    showStatus("generateStatus", `✅ Đã tạo ${quiz.questions.length} câu! Đang chuyển vào game...`, "success");
-
     document.getElementById("flashcardEmpty").style.display = "none";
     document.getElementById("flashcardArea").style.display = "block";
     document.getElementById("quizEmpty").style.display = "none";
 
-    // 🎮 TỰ ĐỘNG CHUYỂN SANG GAME ĐÃ CHỌN
-    setTimeout(() => {
-      const gameTab = document.querySelector(`[data-tab="${selectedGame}"]`);
-      if (gameTab) gameTab.click();
+    showStatus("generateStatus", `✅ Đã tạo ${quiz.questions.length} câu! Đang vào game...`, "success");
 
-      // Đợi tab hiện ra rồi init game
+    // TỰ ĐỘNG CHUYỂN SANG GAME
+    setTimeout(() => {
+      switchToGame(selectedGame);
+
       setTimeout(() => {
         try {
-          if (selectedGame === "snake" && window.SnakeGame) {
-            SnakeGame.init(quiz, "snakeCanvas");
-          } else if (selectedGame === "zombie" && window.ZombieGame) {
-            ZombieGame.init(quiz, "zombieCanvas");
-          } else if (selectedGame === "runner" && window.RunnerGame) {
-            RunnerGame.init(quiz, "runnerCanvas");
-          } else if (selectedGame === "memory" && window.MemoryGame) {
-            MemoryGame.init(quiz);
-          } else if (selectedGame === "speed" && window.SpeedGame) {
-            SpeedGame.init(quiz);
-          } else if (selectedGame === "quiz") {
+          if (selectedGame === "snake" && window.SnakeGame) SnakeGame.init(quiz, "snakeCanvas");
+          else if (selectedGame === "zombie" && window.ZombieGame) ZombieGame.init(quiz, "zombieCanvas");
+          else if (selectedGame === "runner" && window.RunnerGame) RunnerGame.init(quiz, "runnerCanvas");
+          else if (selectedGame === "memory" && window.MemoryGame) MemoryGame.init(quiz);
+          else if (selectedGame === "speed" && window.SpeedGame) SpeedGame.init(quiz);
+          else if (selectedGame === "quiz") {
             currentQuiz = quiz;
             startQuiz();
           }
         } catch (err) {
           console.error("Lỗi khởi tạo game:", err);
-          showStatus("generateStatus", "⚠️ Không thể khởi động game: " + err.message, "error");
         }
-      }, 250);
-    }, 800);
+      }, 200);
+    }, 700);
 
   } catch (e) {
     console.error(e);
@@ -273,13 +295,13 @@ QUY TẮC:
   }
 }
 
-// ============ QUIZ THƯỜNG ============
+// ============ QUIZ ============
 function startQuiz() {
+  if (!currentQuiz?.questions?.length) return;
   document.getElementById("quizEmpty").style.display = "none";
   document.getElementById("quizContainer").style.display = "block";
   document.getElementById("resultCard").style.display = "none";
   document.getElementById("gameHeader").style.display = "grid";
-  document.getElementById("timerStat").style.display = mode === "survival" ? "block" : "none";
   document.getElementById("scoreDisplay").textContent = "0";
   document.getElementById("comboDisplay").textContent = "x1";
   document.getElementById("comboDisplay").classList.remove("combo-fire");
@@ -319,19 +341,6 @@ function showQuestion(idx) {
   area.querySelectorAll(".option").forEach(opt => {
     opt.addEventListener("click", () => selectAnswer(parseInt(opt.dataset.o)));
   });
-
-  if (mode === "survival") {
-    timeLeft = 30;
-    document.getElementById("timerDisplay").textContent = timeLeft;
-    document.getElementById("timerDisplay").classList.remove("warning");
-    clearInterval(timerInterval);
-    timerInterval = setInterval(() => {
-      timeLeft--;
-      document.getElementById("timerDisplay").textContent = timeLeft;
-      if (timeLeft <= 10) document.getElementById("timerDisplay").classList.add("warning");
-      if (timeLeft <= 0) { clearInterval(timerInterval); selectAnswer(-1); }
-    }, 1000);
-  }
 }
 
 function selectAnswer(chosen) {
@@ -349,7 +358,7 @@ function selectAnswer(chosen) {
   const exp = document.getElementById("explanation");
   exp.classList.add("show");
   exp.innerHTML = `
-    <b>${isCorrect ? "✅ Đúng!" : chosen === -1 ? "⏰ Hết giờ!" : "❌ Sai."}</b>
+    <b>${isCorrect ? "✅ Đúng!" : "❌ Sai."}</b>
     Đáp án đúng: <b>${String.fromCharCode(65 + q.correctIndex)}. ${escapeHtml(q.options[q.correctIndex])}</b><br/>
     <b>Giải thích:</b> ${escapeHtml(q.explanation || "")}
   `;
@@ -367,15 +376,12 @@ function selectAnswer(chosen) {
     if (combo >= 3) document.getElementById("comboDisplay").classList.add("combo-fire");
   } else {
     combo = 0;
-    if (chosen !== -1) score = Math.max(0, score - 5);
+    score = Math.max(0, score - 5);
     document.getElementById("comboDisplay").textContent = "x1";
     document.getElementById("comboDisplay").classList.remove("combo-fire");
   }
 
   document.getElementById("scoreDisplay").textContent = score;
-  document.getElementById("scoreDisplay").parentElement.classList.add("pulse");
-  setTimeout(() => document.getElementById("scoreDisplay").parentElement.classList.remove("pulse"), 400);
-
   userAnswers[currentIndex] = chosen;
   const isLast = currentIndex >= currentQuiz.questions.length - 1;
   document.getElementById(isLast ? "finishBtn" : "nextBtn").style.display = "block";
@@ -415,132 +421,4 @@ function endGame() {
   const percent = Math.round((correct / total) * 100);
   document.getElementById("finalScore").innerHTML = `
     ${score} điểm
-    <small>${correct}/${total} câu đúng (${percent}%) • Combo cao nhất: x${maxCombo}</small>
-  `;
-
-  let rank, rankColor;
-  if (percent >= 90) { rank = "🏆 THIÊN TÀI"; rankColor = "linear-gradient(135deg, #fbbf24, #f59e0b)"; }
-  else if (percent >= 70) { rank = "⭐ GIỎI"; rankColor = "linear-gradient(135deg, #10b981, #059669)"; }
-  else if (percent >= 50) { rank = "💪 KHÁ"; rankColor = "linear-gradient(135deg, #6366f1, #8b5cf6)"; }
-  else if (percent >= 30) { rank = "📖 CẦN CỐ"; rankColor = "linear-gradient(135deg, #f59e0b, #ef4444)"; }
-  else { rank = "🌱 MỚI BẮT ĐẦU"; rankColor = "linear-gradient(135deg, #94a3b8, #64748b)"; }
-
-  const badge = document.getElementById("rankBadge");
-  badge.textContent = rank;
-  badge.style.background = rankColor;
-
-  document.getElementById("analysisBox").innerHTML = `
-    <b>📊 Phân tích:</b><br/>
-    Bạn trả lời đúng <b>${correct}</b>/${total} câu (${percent}%).<br/>
-    ${percent >= 80 ? "🎉 Nắm rất vững!" : percent >= 50 ? "💪 Còn lỗ hổng. Xem chủ đề yếu bên dưới." : "📖 Cần ôn lại."}
-  `;
-
-  const weakTopics = Object.entries(topicStats)
-    .filter(([_, s]) => s.correct / s.total < 0.7)
-    .sort((a, b) => a[1].correct / a[1].total - b[1].correct / b[1].total);
-
-  const weakBox = document.getElementById("weakTopicsBox");
-  if (weakTopics.length === 0) {
-    weakBox.style.background = "#d1fae5";
-    weakBox.innerHTML = `<b>✅ Không có chủ đề yếu!</b>`;
-  } else {
-    weakBox.style.background = "#fef3c7";
-    weakBox.innerHTML = `
-      <b>⚠️ Chủ đề YẾU:</b><br/><br/>
-      ${weakTopics.map(([topic, s]) => `
-        <div style="margin-bottom:8px">
-          <span class="topic-tag">${escapeHtml(topic)}</span>
-          Đúng ${s.correct}/${s.total} (${Math.round(s.correct / s.total * 100)}%)
-        </div>
-      `).join("")}
-    `;
-  }
-
-  window.scrollTo({ top: 0, behavior: "smooth" });
-}
-
-document.getElementById("replayBtn").addEventListener("click", startQuiz);
-document.getElementById("newQuizBtn").addEventListener("click", () => {
-  document.querySelector('[data-tab="generate"]').click();
-});
-
-// ============ FLASHCARD ============
-document.querySelector('[data-tab="flashcard"]').addEventListener("click", () => {
-  if (flashcards.length === 0) {
-    const quiz = getStoredQuiz();
-    if (quiz) {
-      flashcards = quiz.questions.map(q => ({
-        front: q.question,
-        back: `${q.options[q.correctIndex]}\n\n💡 ${q.explanation || ""}`
-      }));
-    }
-  }
-  if (flashcards.length === 0) return;
-  document.getElementById("flashcardEmpty").style.display = "none";
-  document.getElementById("flashcardArea").style.display = "block";
-  fcIndex = 0;
-  renderFlashcard();
-});
-
-function renderFlashcard() {
-  if (flashcards.length === 0) return;
-  const fc = flashcards[fcIndex];
-  document.getElementById("fcFront").textContent = fc.front;
-  document.getElementById("fcBack").textContent = fc.back;
-  document.getElementById("fcProgress").textContent = `${fcIndex + 1}/${flashcards.length}`;
-  document.getElementById("flashcard").classList.remove("flipped");
-}
-
-document.getElementById("flashcard").addEventListener("click", () => {
-  document.getElementById("flashcard").classList.toggle("flipped");
-});
-
-document.getElementById("fcPrev").addEventListener("click", () => {
-  fcIndex = (fcIndex - 1 + flashcards.length) % flashcards.length;
-  renderFlashcard();
-});
-
-document.getElementById("fcNext").addEventListener("click", () => {
-  fcIndex = (fcIndex + 1) % flashcards.length;
-  renderFlashcard();
-});
-
-document.getElementById("fcShuffle").addEventListener("click", () => {
-  flashcards = shuffle(flashcards);
-  fcIndex = 0;
-  renderFlashcard();
-});
-
-// ============ CHAT ============
-document.getElementById("chatSendBtn").addEventListener("click", sendChat);
-document.getElementById("chatInput").addEventListener("keydown", e => {
-  if (e.key === "Enter") sendChat();
-});
-
-async function sendChat() {
-  const input = document.getElementById("chatInput");
-  const text = input.value.trim();
-  if (!text) return;
-  input.value = "";
-  appendMsg(escapeHtml(text), "user");
-  const loadingId = "loading-" + Date.now();
-  appendMsg(`<span class="loader"></span>Đang suy nghĩ...`, "bot", loadingId);
-  try {
-    const reply = await callAI(`Trả lời câu hỏi sau bằng tiếng Việt, ngắn gọn, dễ hiểu:\n\n${text}`);
-    document.getElementById(loadingId)?.remove();
-    appendMsg(escapeHtml(reply), "bot");
-  } catch (e) {
-    document.getElementById(loadingId)?.remove();
-    appendMsg("❌ Lỗi: " + escapeHtml(e.message), "bot");
-  }
-}
-
-function appendMsg(html, role, id = null) {
-  const box = document.getElementById("chatMessages");
-  const div = document.createElement("div");
-  div.className = "msg " + role;
-  if (id) div.id = id;
-  div.innerHTML = html;
-  box.appendChild(div);
-  box.scrollTop = box.scrollHeight;
-}
+    <small>${correct}/${
