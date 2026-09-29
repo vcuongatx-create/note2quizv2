@@ -1,5 +1,5 @@
 // ==========================================
-// NOTE2QUIZ - FULL FIXED
+// NOTE2QUIZ - FULL FIXED v3
 // ==========================================
 
 const POLLINATIONS_API_KEY = "sk_X08niFv1nHXXe3oxTfmh2QWJnBkbmaqW";
@@ -18,7 +18,6 @@ let maxCombo = 0;
 let flashcards = [];
 let fcIndex = 0;
 
-// Helper
 function $(id) { return document.getElementById(id); }
 function setText(id, text) { const el = $(id); if (el) el.textContent = text; }
 function setHtml(id, html) { const el = $(id); if (el) el.innerHTML = html; }
@@ -64,35 +63,37 @@ document.querySelectorAll(".nav-btn").forEach(btn => {
   });
 });
 
-// ============ SUB-NAV GAME SWITCHING ============
+// ============ ACTIVATE GAME ============
 function activateGame(game) {
-  // Update subnav buttons
   document.querySelectorAll(".subnav-btn").forEach(b => b.classList.remove("active"));
   const targetSub = document.querySelector(`.subnav-btn[data-game="${game}"]`);
   if (targetSub) targetSub.classList.add("active");
 
-  // Show only selected panel
   document.querySelectorAll(".game-panel").forEach(p => p.style.display = "none");
   const panel = $("panel-" + game);
   if (panel) panel.style.display = "block";
 
-  // Init game nếu có quiz
   const quiz = getStoredQuiz();
-  if (!quiz) return;
+  if (!quiz) {
+    console.warn("Không có quiz trong sessionStorage");
+    return;
+  }
 
-  // Delay nhỏ để DOM render xong
+  console.log("activateGame:", game, "có", quiz.questions.length, "câu");
+
   setTimeout(() => {
     try {
       if (game === "snake" && window.SnakeGame) {
-        SnakeGame.init(quiz, "snakeCanvas");
+        console.log("Gọi SnakeGame.init");
+        window.SnakeGame.init(quiz, "snakeCanvas");
       } else if (game === "zombie" && window.ZombieGame) {
-        ZombieGame.init(quiz, "zombieCanvas");
+        window.ZombieGame.init(quiz, "zombieCanvas");
       } else if (game === "runner" && window.RunnerGame) {
-        RunnerGame.init(quiz, "runnerCanvas");
+        window.RunnerGame.init(quiz, "runnerCanvas");
       } else if (game === "memory" && window.MemoryGame) {
-        MemoryGame.init(quiz);
+        window.MemoryGame.init(quiz);
       } else if (game === "speed" && window.SpeedGame) {
-        SpeedGame.init(quiz);
+        window.SpeedGame.init(quiz);
       } else if (game === "quiz") {
         currentQuiz = quiz;
         startQuiz();
@@ -109,14 +110,10 @@ document.querySelectorAll(".subnav-btn").forEach(btn => {
   });
 });
 
-// Chuyển sang game cụ thể (gọi từ generateQuiz)
 function switchToGame(gameName) {
   const playTabBtn = document.querySelector('[data-tab="play"]');
   if (playTabBtn) playTabBtn.click();
-
-  setTimeout(() => {
-    activateGame(gameName);
-  }, 250);
+  setTimeout(() => activateGame(gameName), 250);
 }
 
 // ============ GỌI AI ============
@@ -290,7 +287,6 @@ QUY TẮC:
 
     showStatus("generateStatus", `✅ Đã tạo ${quiz.questions.length} câu! Đang vào game...`, "success");
 
-    // AUTO CHUYỂN SANG GAME
     setTimeout(() => {
       switchToGame(selectedGame);
     }, 600);
