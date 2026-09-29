@@ -15,7 +15,7 @@
 }
 
 html {
-  font-size: 17px; /* Base to hơn */
+  font-size: 19px; /* ⭐ TO HƠN */
 }
 
 body {
@@ -23,18 +23,18 @@ body {
   background: var(--bg-gradient);
   background-attachment: fixed;
   color: var(--text);
-  line-height: 1.7;
+  line-height: 1.75;
   min-height: 100vh;
   padding-bottom: 60px;
-  font-size: 17px;
+  font-size: 19px;
 }
 
 /* ========== HEADER ========== */
 header {
-  background: rgba(255,255,255,0.96);
+  background: rgba(255,255,255,0.97);
   backdrop-filter: blur(12px);
   border-bottom: 1px solid rgba(0,0,0,0.06);
-  padding: 18px 32px;
+  padding: 20px 36px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -43,11 +43,11 @@ header {
   z-index: 100;
   flex-wrap: wrap;
   gap: 16px;
-  box-shadow: 0 2px 20px rgba(0,0,0,0.06);
+  box-shadow: 0 2px 24px rgba(0,0,0,0.08);
 }
 
 .logo {
-  font-size: 26px;
+  font-size: 30px;
   font-weight: 800;
   background: var(--bg-gradient);
   -webkit-background-clip: text;
@@ -56,37 +56,37 @@ header {
   letter-spacing: -0.5px;
 }
 
-nav { display: flex; gap: 10px; flex-wrap: wrap; }
+nav { display: flex; gap: 12px; flex-wrap: wrap; }
 
 .nav-btn {
-  padding: 12px 22px;
+  padding: 14px 26px;
   border: none;
   background: transparent;
   cursor: pointer;
-  border-radius: 12px;
-  font-size: 16px;
+  border-radius: 14px;
+  font-size: 18px;
   color: var(--muted);
   transition: all .2s;
-  font-weight: 600;
+  font-weight: 700;
   white-space: nowrap;
 }
 
 .nav-btn:hover {
-  background: rgba(99,102,241,0.1);
+  background: rgba(99,102,241,0.12);
   color: var(--primary);
 }
 
 .nav-btn.active {
   background: var(--primary);
   color: white;
-  box-shadow: 0 6px 20px rgba(99,102,241,0.4);
-  transform: translateY(-1px);
+  box-shadow: 0 6px 24px rgba(99,102,241,0.45);
+  transform: translateY(-2px);
 }
 
 /* ========== MAIN ========== */
 main {
-  max-width: 1000px;
-  margin: 32px auto;
+  max-width: 1100px;
+  margin: 36px auto;
   padding: 0 20px;
 }
 
@@ -101,49 +101,49 @@ main {
 /* ========== CARD ========== */
 .card {
   background: var(--card);
-  border-radius: 24px;
-  padding: 40px;
-  margin-bottom: 28px;
-  box-shadow: 0 12px 48px rgba(0,0,0,0.12);
+  border-radius: 26px;
+  padding: 48px;
+  margin-bottom: 32px;
+  box-shadow: 0 14px 56px rgba(0,0,0,0.14);
 }
 
 .card h2 {
-  margin-bottom: 20px;
-  font-size: 30px;
-  font-weight: 800;
-  letter-spacing: -0.5px;
-  line-height: 1.3;
+  margin-bottom: 24px;
+  font-size: 36px;
+  font-weight: 900;
+  letter-spacing: -0.8px;
+  line-height: 1.25;
 }
 
 .card h3 {
-  margin-bottom: 12px;
-  font-size: 20px;
+  margin-bottom: 14px;
+  font-size: 22px;
   font-weight: 700;
 }
 
 .hint {
   color: var(--muted);
-  font-size: 16px;
-  margin-bottom: 24px;
-  line-height: 1.6;
+  font-size: 18px;
+  margin-bottom: 28px;
+  line-height: 1.7;
 }
 
-.empty { text-align: center; padding: 80px 32px; }
-.empty h2 { font-size: 32px; }
-.empty p { font-size: 18px; color: var(--muted); }
+.empty { text-align: center; padding: 90px 32px; }
+.empty h2 { font-size: 38px; }
+.empty p { font-size: 20px; color: var(--muted); }
 
 /* ========== INPUT GRID ========== */
 .input-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 24px;
-  margin-bottom: 32px;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 28px;
+  margin-bottom: 36px;
 }
 
 .input-box {
-  padding: 24px;
-  border: 2.5px dashed var(--border);
-  border-radius: 16px;
+  padding: 28px;
+  border: 3px dashed var(--border);
+  border-radius: 18px;
   transition: all .2s;
   background: #fafbfc;
 }
@@ -151,15 +151,15 @@ main {
 .input-box:hover {
   border-color: var(--primary);
   background: #f5f3ff;
-  transform: translateY(-2px);
+  transform: translateY(-3px);
 }
 
-.input-box h3 { font-size: 18px; margin-bottom: 12px; }
+.input-box h3 { font-size: 20px; margin-bottom: 14px; }
 .input-box small {
   display: block;
   color: var(--muted);
-  font-size: 14px;
-  margin-top: 10px;
+  font-size: 16px;
+  margin-top: 12px;
 }
 
 /* ========== FORM ELEMENTS ========== */
@@ -169,41 +169,42 @@ input[type="password"],
 textarea,
 select {
   width: 100%;
-  padding: 14px 18px;
-  border: 2px solid var(--border);
-  border-radius: 12px;
-  font-size: 16px;
+  padding: 16px 22px;
+  border: 2.5px solid var(--border);
+  border-radius: 14px;
+  font-size: 18px;
   font-family: inherit;
-  margin-top: 8px;
+  margin-top: 10px;
   background: white;
   transition: all .2s;
   color: var(--text);
+  font-weight: 500;
 }
 
 textarea {
-  min-height: 120px;
+  min-height: 140px;
   resize: vertical;
-  line-height: 1.6;
+  line-height: 1.7;
 }
 
 input:focus, textarea:focus, select:focus {
   outline: none;
   border-color: var(--primary);
-  box-shadow: 0 0 0 4px rgba(99,102,241,0.15);
+  box-shadow: 0 0 0 5px rgba(99,102,241,0.18);
 }
 
 /* ========== OPTIONS ROW ========== */
 .options {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 20px;
-  margin-bottom: 28px;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 24px;
+  margin-bottom: 32px;
 }
 
 .options label {
-  font-size: 16px;
+  font-size: 18px;
   color: var(--text);
-  font-weight: 600;
+  font-weight: 700;
   display: block;
 }
 
@@ -212,21 +213,21 @@ input:focus, textarea:focus, select:focus {
   background: var(--primary);
   color: white;
   border: none;
-  padding: 18px 32px;
-  border-radius: 14px;
-  font-size: 18px;
-  font-weight: 700;
+  padding: 22px 40px;
+  border-radius: 16px;
+  font-size: 21px;
+  font-weight: 800;
   cursor: pointer;
   transition: all .2s;
   width: 100%;
-  box-shadow: 0 6px 24px rgba(99,102,241,0.4);
-  letter-spacing: 0.3px;
+  box-shadow: 0 8px 28px rgba(99,102,241,0.45);
+  letter-spacing: 0.5px;
 }
 
 .primary-btn:hover:not(:disabled) {
   background: var(--primary-dark);
   transform: translateY(-3px);
-  box-shadow: 0 10px 32px rgba(99,102,241,0.5);
+  box-shadow: 0 12px 40px rgba(99,102,241,0.55);
 }
 
 .primary-btn:active:not(:disabled) {
@@ -242,56 +243,56 @@ input:focus, textarea:focus, select:focus {
 .secondary-btn {
   background: white;
   color: var(--primary);
-  border: 2.5px solid var(--primary);
-  padding: 16px 28px;
-  border-radius: 14px;
-  font-size: 17px;
-  font-weight: 700;
+  border: 3px solid var(--primary);
+  padding: 18px 32px;
+  border-radius: 16px;
+  font-size: 19px;
+  font-weight: 800;
   cursor: pointer;
   width: 100%;
-  margin-top: 12px;
+  margin-top: 14px;
   transition: all .2s;
 }
 
 .secondary-btn:hover {
   background: #f5f3ff;
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(99,102,241,0.2);
+  box-shadow: 0 8px 24px rgba(99,102,241,0.25);
 }
 
 /* ========== STATUS ========== */
 .status {
-  margin-top: 24px;
-  padding: 18px 22px;
-  border-radius: 14px;
-  font-size: 16px;
+  margin-top: 28px;
+  padding: 22px 26px;
+  border-radius: 16px;
+  font-size: 18px;
   display: none;
-  font-weight: 600;
-  line-height: 1.5;
+  font-weight: 700;
+  line-height: 1.6;
 }
 
 .status.info { display: block; background: #dbeafe; color: #1e40af; }
 .status.success { display: block; background: #d1fae5; color: #065f46; }
 .status.error { display: block; background: #fee2e2; color: #991b1b; }
 
-/* ========== SUB-NAV (GAME TABS) ========== */
+/* ========== SUB-NAV ========== */
 .subnav {
   display: flex;
-  gap: 10px;
+  gap: 12px;
   flex-wrap: wrap;
   justify-content: center;
 }
 
 .subnav-btn {
-  padding: 12px 22px;
-  border: 2px solid var(--border);
+  padding: 14px 26px;
+  border: 3px solid var(--border);
   background: white;
   cursor: pointer;
-  border-radius: 12px;
-  font-size: 16px;
+  border-radius: 14px;
+  font-size: 18px;
   color: var(--muted);
   transition: all .2s;
-  font-weight: 600;
+  font-weight: 700;
   white-space: nowrap;
 }
 
@@ -299,62 +300,64 @@ input:focus, textarea:focus, select:focus {
   border-color: var(--primary);
   color: var(--primary);
   background: #f5f3ff;
+  transform: translateY(-2px);
 }
 
 .subnav-btn.active {
   background: var(--primary);
   color: white;
   border-color: var(--primary);
-  box-shadow: 0 4px 16px rgba(99,102,241,0.4);
+  box-shadow: 0 6px 22px rgba(99,102,241,0.45);
+  transform: translateY(-2px);
 }
 
 /* ========== GAME HUD ========== */
 .game-hud {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 16px;
-  margin: 28px 0;
+  gap: 20px;
+  margin: 32px 0;
 }
 
 .hud-item {
   background: linear-gradient(135deg, #6366f1, #8b5cf6);
   color: white;
-  padding: 18px 12px;
-  border-radius: 16px;
+  padding: 22px 14px;
+  border-radius: 18px;
   text-align: center;
-  box-shadow: 0 6px 20px rgba(99,102,241,0.3);
+  box-shadow: 0 8px 24px rgba(99,102,241,0.35);
 }
 
 .hud-item span {
   display: block;
-  font-size: 13px;
-  opacity: 0.9;
+  font-size: 14px;
+  opacity: 0.95;
   text-transform: uppercase;
-  letter-spacing: 1px;
-  font-weight: 600;
+  letter-spacing: 1.2px;
+  font-weight: 700;
 }
 
 .hud-item b {
   display: block;
-  font-size: 28px;
-  margin-top: 6px;
-  font-weight: 800;
+  font-size: 34px;
+  margin-top: 8px;
+  font-weight: 900;
 }
 
-/* ========== QUIZ GAME HEADER ========== */
+/* ========== QUIZ HEADER ========== */
 .game-header {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
-  gap: 16px;
-  margin-bottom: 28px;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 20px;
+  margin-bottom: 32px;
 }
 
 .stat {
   background: white;
-  border-radius: 18px;
-  padding: 18px;
+  border-radius: 20px;
+  padding: 22px;
   text-align: center;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+  box-shadow: 0 10px 32px rgba(0,0,0,0.12);
   transition: transform .2s;
 }
 
@@ -368,52 +371,52 @@ input:focus, textarea:focus, select:focus {
 
 .stat-label {
   display: block;
-  font-size: 12px;
+  font-size: 13px;
   color: var(--muted);
   text-transform: uppercase;
-  letter-spacing: 1px;
-  font-weight: 700;
+  letter-spacing: 1.2px;
+  font-weight: 800;
 }
 
 .stat-value {
   display: block;
-  font-size: 26px;
-  font-weight: 800;
+  font-size: 30px;
+  font-weight: 900;
   color: var(--primary);
-  margin-top: 4px;
+  margin-top: 6px;
 }
 
 .stat-value.combo-fire { color: var(--danger); }
 
 /* ========== QUESTION ========== */
-.question { margin-bottom: 24px; }
+.question { margin-bottom: 28px; }
 
 .question-text {
-  font-weight: 700;
-  margin-bottom: 22px;
-  font-size: 20px;
+  font-weight: 800;
+  margin-bottom: 26px;
+  font-size: 24px;
   color: #0f172a;
-  line-height: 1.6;
+  line-height: 1.55;
 }
 
 .option {
   display: flex;
   align-items: center;
-  padding: 18px 22px;
-  margin-bottom: 14px;
-  border-radius: 14px;
+  padding: 22px 26px;
+  margin-bottom: 16px;
+  border-radius: 16px;
   cursor: pointer;
-  border: 2.5px solid var(--border);
+  border: 3px solid var(--border);
   background: white;
   transition: all .2s;
-  font-size: 17px;
-  font-weight: 500;
+  font-size: 19px;
+  font-weight: 600;
   line-height: 1.5;
 }
 
 .option:hover:not(.disabled) {
   border-color: var(--primary);
-  transform: translateX(6px);
+  transform: translateX(8px);
   background: #f5f3ff;
 }
 
@@ -433,27 +436,27 @@ input:focus, textarea:focus, select:focus {
 }
 
 .option.disabled { cursor: default; }
-.option input { margin-right: 16px; width: 20px; height: 20px; }
+.option input { margin-right: 18px; width: 22px; height: 22px; }
 
 .explanation {
-  margin-top: 18px;
-  padding: 20px 24px;
+  margin-top: 22px;
+  padding: 24px 28px;
   background: #fffbeb;
-  border-left: 5px solid var(--warning);
-  border-radius: 12px;
-  font-size: 16px;
+  border-left: 6px solid var(--warning);
+  border-radius: 14px;
+  font-size: 18px;
   line-height: 1.7;
   display: none;
 }
 
 .explanation.show { display: block; animation: fadeIn .3s; }
 
-/* ========== SCORE / RESULT ========== */
+/* ========== SCORE ========== */
 .score {
-  font-size: 72px;
+  font-size: 96px;
   font-weight: 900;
   text-align: center;
-  margin: 24px 0;
+  margin: 28px 0;
   background: var(--bg-gradient);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -462,57 +465,57 @@ input:focus, textarea:focus, select:focus {
 }
 
 .score small {
-  font-size: 18px;
+  font-size: 22px;
   color: var(--muted);
-  font-weight: 500;
+  font-weight: 600;
   display: block;
-  margin-top: 14px;
+  margin-top: 16px;
   -webkit-text-fill-color: var(--muted);
   line-height: 1.5;
 }
 
 .rank-badge {
   text-align: center;
-  font-size: 26px;
-  font-weight: 800;
-  padding: 22px;
-  border-radius: 16px;
-  margin: 24px 0;
+  font-size: 32px;
+  font-weight: 900;
+  padding: 26px;
+  border-radius: 18px;
+  margin: 28px 0;
   color: white;
-  box-shadow: 0 10px 32px rgba(0,0,0,0.2);
-  letter-spacing: 1px;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.25);
+  letter-spacing: 1.5px;
 }
 
 #analysisBox, #weakTopicsBox {
-  padding: 22px 26px;
+  padding: 26px 30px;
   background: #f8fafc;
-  border-radius: 16px;
-  margin-bottom: 18px;
-  font-size: 16px;
-  line-height: 1.7;
+  border-radius: 18px;
+  margin-bottom: 20px;
+  font-size: 18px;
+  line-height: 1.75;
 }
 
 #weakTopicsBox {
   background: #fef3c7;
-  border-left: 5px solid var(--warning);
+  border-left: 6px solid var(--warning);
 }
 
 .topic-tag {
   display: inline-block;
-  padding: 6px 16px;
+  padding: 8px 20px;
   background: var(--warning);
   color: white;
-  border-radius: 20px;
-  font-size: 14px;
-  margin: 6px 6px 0 0;
-  font-weight: 700;
+  border-radius: 24px;
+  font-size: 16px;
+  margin: 8px 8px 0 0;
+  font-weight: 800;
 }
 
 /* ========== FLASHCARD ========== */
 .flashcard {
   perspective: 1500px;
-  height: 340px;
-  margin: 28px 0;
+  height: 380px;
+  margin: 32px 0;
   cursor: pointer;
   position: relative;
 }
@@ -522,18 +525,18 @@ input:focus, textarea:focus, select:focus {
   width: 100%;
   height: 100%;
   backface-visibility: hidden;
-  border-radius: 24px;
+  border-radius: 26px;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 40px;
-  font-size: 22px;
+  padding: 44px;
+  font-size: 26px;
   text-align: center;
-  font-weight: 600;
+  font-weight: 700;
   transition: transform .7s;
-  box-shadow: 0 16px 48px rgba(0,0,0,0.2);
+  box-shadow: 0 18px 56px rgba(0,0,0,0.22);
   overflow-y: auto;
-  line-height: 1.6;
+  line-height: 1.55;
 }
 
 .fc-front {
@@ -552,16 +555,16 @@ input:focus, textarea:focus, select:focus {
 
 .fc-progress {
   text-align: center;
-  font-size: 18px;
+  font-size: 20px;
   color: var(--muted);
-  font-weight: 700;
+  font-weight: 800;
 }
 
 .fc-actions {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
-  gap: 12px;
-  margin-top: 18px;
+  gap: 14px;
+  margin-top: 22px;
 }
 
 .fc-actions button { margin-top: 0; }
@@ -570,27 +573,27 @@ input:focus, textarea:focus, select:focus {
 .chat-card {
   display: flex;
   flex-direction: column;
-  height: 75vh;
-  min-height: 500px;
+  height: 78vh;
+  min-height: 550px;
 }
 
 .chat-messages {
   flex: 1;
   overflow-y: auto;
-  padding: 16px 0;
-  margin-bottom: 16px;
+  padding: 20px 0;
+  margin-bottom: 20px;
 }
 
 .msg {
-  padding: 16px 22px;
-  border-radius: 16px;
-  margin-bottom: 14px;
-  font-size: 16px;
+  padding: 20px 26px;
+  border-radius: 18px;
+  margin-bottom: 16px;
+  font-size: 18px;
   max-width: 85%;
   white-space: pre-wrap;
   word-wrap: break-word;
   animation: fadeIn .3s;
-  line-height: 1.6;
+  line-height: 1.65;
 }
 
 .msg.bot {
@@ -607,30 +610,30 @@ input:focus, textarea:focus, select:focus {
 
 .chat-input-row {
   display: flex;
-  gap: 12px;
+  gap: 14px;
 }
 
 .chat-input-row input {
   flex: 1;
   margin-top: 0;
-  font-size: 16px;
+  font-size: 18px;
 }
 
 .chat-input-row button {
   width: auto;
-  padding: 14px 28px;
-  font-size: 16px;
+  padding: 18px 32px;
+  font-size: 18px;
 }
 
 .loader {
   display: inline-block;
-  width: 18px;
-  height: 18px;
+  width: 22px;
+  height: 22px;
   border: 3px solid rgba(255,255,255,0.3);
   border-top-color: white;
   border-radius: 50%;
   animation: spin 0.7s linear infinite;
-  margin-right: 10px;
+  margin-right: 12px;
   vertical-align: middle;
 }
 
@@ -642,10 +645,10 @@ input:focus, textarea:focus, select:focus {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  font-size: 80px;
+  font-size: 100px;
   font-weight: 900;
   color: var(--gold);
-  text-shadow: 0 0 30px rgba(251,191,36,0.9);
+  text-shadow: 0 0 40px rgba(251,191,36,0.9);
   pointer-events: none;
   animation: comboFloat 1.2s ease-out;
   z-index: 9999;
@@ -657,40 +660,45 @@ input:focus, textarea:focus, select:focus {
   100% { transform: translate(-50%, -100%) scale(1); opacity: 0; }
 }
 
-/* ========== CANVAS CONTAINERS ========== */
+/* ========== CANVAS ========== */
 .snake-container, .zombie-container, .runner-container {
   display: flex;
   justify-content: center;
-  margin: 28px 0;
+  margin: 32px 0;
 }
 
 #snakeCanvas, #zombieCanvas, #runnerCanvas {
-  border-radius: 16px;
-  box-shadow: 0 16px 48px rgba(99,102,241,0.35);
+  border-radius: 20px;
+  box-shadow: 0 20px 56px rgba(99,102,241,0.4);
   max-width: 100%;
   height: auto;
+  outline: none;
+}
+
+#snakeCanvas:focus {
+  box-shadow: 0 20px 56px rgba(99,102,241,0.7);
 }
 
 .snake-mobile-controls {
   display: none;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
-  margin-top: 22px;
+  gap: 14px;
+  margin-top: 26px;
 }
 
-.snake-mobile-controls > div { display: flex; gap: 12px; }
+.snake-mobile-controls > div { display: flex; gap: 14px; }
 
 .snake-mobile-controls button {
-  width: 72px;
-  height: 72px;
-  border-radius: 16px;
+  width: 84px;
+  height: 84px;
+  border-radius: 18px;
   border: none;
   background: var(--primary);
   color: white;
-  font-size: 28px;
+  font-size: 34px;
   cursor: pointer;
-  box-shadow: 0 6px 20px rgba(99,102,241,0.4);
+  box-shadow: 0 8px 24px rgba(99,102,241,0.45);
   transition: all .15s;
 }
 
@@ -704,7 +712,7 @@ input:focus, textarea:focus, select:focus {
   position: fixed;
   top: 0; left: 0;
   width: 100%; height: 100%;
-  background: rgba(0,0,0,0.75);
+  background: rgba(0,0,0,0.8);
   backdrop-filter: blur(6px);
   display: none;
   align-items: center;
@@ -717,9 +725,9 @@ input:focus, textarea:focus, select:focus {
 
 .modal-content {
   background: white;
-  border-radius: 24px;
-  padding: 40px;
-  max-width: 600px;
+  border-radius: 26px;
+  padding: 44px;
+  max-width: 640px;
   width: 100%;
   max-height: 90vh;
   overflow-y: auto;
@@ -733,34 +741,34 @@ input:focus, textarea:focus, select:focus {
 
 .modal-progress {
   text-align: center;
-  font-size: 15px;
+  font-size: 17px;
   color: var(--muted);
-  margin-bottom: 12px;
-  font-weight: 700;
+  margin-bottom: 14px;
+  font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 1.2px;
 }
 
 .modal-content h3 {
-  margin-bottom: 22px;
-  font-size: 22px;
+  margin-bottom: 26px;
+  font-size: 26px;
   line-height: 1.5;
 }
 
 .snake-options {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 14px;
 }
 
 .snake-option-btn {
-  padding: 18px 22px;
-  border: 2.5px solid var(--border);
-  border-radius: 14px;
+  padding: 22px 26px;
+  border: 3px solid var(--border);
+  border-radius: 16px;
   background: white;
   text-align: left;
-  font-size: 17px;
-  font-weight: 500;
+  font-size: 19px;
+  font-weight: 600;
   cursor: pointer;
   transition: all .2s;
   font-family: inherit;
@@ -769,7 +777,7 @@ input:focus, textarea:focus, select:focus {
 
 .snake-option-btn:hover:not(:disabled) {
   border-color: var(--primary);
-  transform: translateX(6px);
+  transform: translateX(8px);
   background: #f5f3ff;
 }
 
@@ -777,7 +785,7 @@ input:focus, textarea:focus, select:focus {
   background: #d1fae5;
   border-color: var(--success);
   color: #065f46;
-  font-weight: 700;
+  font-weight: 800;
 }
 
 .snake-option-btn.wrong {
@@ -795,37 +803,37 @@ input:focus, textarea:focus, select:focus {
 .zombie-question-area,
 .runner-question-area,
 .speed-question-area {
-  margin-top: 28px;
+  margin-top: 32px;
 }
 
 .game-question-box {
   background: #f8fafc;
-  border-radius: 20px;
-  padding: 28px;
-  margin-bottom: 20px;
-  border-left: 5px solid var(--primary);
+  border-radius: 22px;
+  padding: 32px;
+  margin-bottom: 24px;
+  border-left: 6px solid var(--primary);
 }
 
 .game-question-box h3 {
-  margin-bottom: 22px;
-  font-size: 20px;
-  line-height: 1.6;
+  margin-bottom: 26px;
+  font-size: 24px;
+  line-height: 1.55;
 }
 
 .game-options-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 14px;
+  gap: 16px;
 }
 
 .game-option-btn {
-  padding: 18px 20px;
-  border: 2.5px solid var(--border);
-  border-radius: 14px;
+  padding: 22px 24px;
+  border: 3px solid var(--border);
+  border-radius: 16px;
   background: white;
   text-align: left;
-  font-size: 16px;
-  font-weight: 500;
+  font-size: 18px;
+  font-weight: 600;
   cursor: pointer;
   transition: all .2s;
   font-family: inherit;
@@ -835,13 +843,13 @@ input:focus, textarea:focus, select:focus {
 .game-option-btn:hover:not(:disabled) {
   border-color: var(--primary);
   transform: translateY(-3px);
-  box-shadow: 0 6px 20px rgba(99,102,241,0.2);
+  box-shadow: 0 8px 24px rgba(99,102,241,0.25);
 }
 
 .game-option-btn.correct {
   background: #d1fae5;
   border-color: var(--success);
-  font-weight: 700;
+  font-weight: 800;
 }
 
 .game-option-btn.wrong {
@@ -857,37 +865,37 @@ input:focus, textarea:focus, select:focus {
 /* ========== MEMORY GRID ========== */
 .memory-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-  gap: 16px;
-  margin-top: 28px;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 18px;
+  margin-top: 32px;
 }
 
 .memory-card {
   aspect-ratio: 1;
   background: linear-gradient(135deg, #6366f1, #8b5cf6);
-  border-radius: 16px;
+  border-radius: 18px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  padding: 16px;
+  padding: 18px;
   text-align: center;
-  font-size: 14px;
+  font-size: 15px;
   color: white;
-  font-weight: 600;
+  font-weight: 700;
   transition: all .3s;
   user-select: none;
   overflow: hidden;
   line-height: 1.4;
-  box-shadow: 0 6px 20px rgba(99,102,241,0.3);
+  box-shadow: 0 8px 24px rgba(99,102,241,0.35);
 }
 
 .memory-card.flipped {
   background: white;
-  border: 2.5px solid var(--primary);
+  border: 3px solid var(--primary);
   color: var(--text);
-  font-size: 13px;
-  box-shadow: 0 8px 24px rgba(99,102,241,0.25);
+  font-size: 14px;
+  box-shadow: 0 10px 28px rgba(99,102,241,0.3);
 }
 
 .memory-card.matched {
@@ -899,7 +907,7 @@ input:focus, textarea:focus, select:focus {
 
 .memory-card::before {
   content: "?";
-  font-size: 44px;
+  font-size: 52px;
   font-weight: 900;
 }
 
@@ -912,16 +920,16 @@ input:focus, textarea:focus, select:focus {
 .speed-scores {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 20px;
-  margin-bottom: 28px;
+  gap: 24px;
+  margin-bottom: 32px;
 }
 
 .speed-player {
-  padding: 28px;
-  border-radius: 20px;
+  padding: 32px;
+  border-radius: 22px;
   text-align: center;
   color: white;
-  box-shadow: 0 10px 32px rgba(0,0,0,0.2);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.25);
 }
 
 .speed-player.p1 { background: linear-gradient(135deg, #6366f1, #4f46e5); }
@@ -929,94 +937,99 @@ input:focus, textarea:focus, select:focus {
 
 .speed-player span {
   display: block;
-  font-size: 18px;
+  font-size: 20px;
   opacity: 0.95;
-  font-weight: 700;
+  font-weight: 800;
 }
 
 .speed-player b {
   display: block;
-  font-size: 56px;
+  font-size: 68px;
   font-weight: 900;
-  margin: 12px 0;
+  margin: 14px 0;
 }
 
 .speed-player small {
   display: block;
-  font-size: 14px;
-  opacity: 0.85;
-  font-weight: 600;
+  font-size: 15px;
+  opacity: 0.9;
+  font-weight: 700;
 }
 
 /* ========== RESPONSIVE MOBILE ========== */
 @media (max-width: 768px) {
-  html { font-size: 16px; }
+  html { font-size: 17px; }
 
   header {
-    padding: 14px 16px;
-    gap: 10px;
+    padding: 16px 18px;
+    gap: 12px;
   }
 
-  .logo { font-size: 22px; }
+  .logo { font-size: 24px; }
 
   nav { width: 100%; }
 
   .nav-btn {
-    padding: 10px 16px;
-    font-size: 14px;
+    padding: 12px 18px;
+    font-size: 15px;
     flex: 1;
     min-width: 0;
   }
 
   main {
-    margin: 20px auto;
+    margin: 24px auto;
     padding: 0 14px;
   }
 
   .card {
-    padding: 24px 20px;
-    border-radius: 20px;
+    padding: 28px 22px;
+    border-radius: 22px;
   }
 
-  .card h2 { font-size: 24px; }
-  .card h3 { font-size: 18px; }
-  .hint { font-size: 15px; }
+  .card h2 { font-size: 26px; }
+  .card h3 { font-size: 20px; }
+  .hint { font-size: 16px; }
 
-  .input-grid { gap: 16px; }
+  .input-grid { gap: 18px; }
 
-  .input-box { padding: 18px; }
+  .input-box { padding: 22px; }
 
-  .options { gap: 14px; }
+  .options { gap: 16px; }
 
   .primary-btn {
+    padding: 18px 26px;
+    font-size: 18px;
+  }
+
+  .secondary-btn {
     padding: 16px 24px;
     font-size: 17px;
   }
 
-  .secondary-btn {
-    padding: 14px 22px;
-    font-size: 16px;
+  .subnav-btn {
+    padding: 12px 18px;
+    font-size: 15px;
   }
 
   .game-hud {
     grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
+    gap: 14px;
   }
 
-  .hud-item { padding: 14px 10px; }
-  .hud-item b { font-size: 22px; }
+  .hud-item { padding: 16px 12px; }
+  .hud-item b { font-size: 26px; }
 
-  .score { font-size: 56px; }
+  .score { font-size: 64px; }
 
   .rank-badge {
-    font-size: 20px;
-    padding: 18px;
+    font-size: 24px;
+    padding: 22px;
   }
 
-  .flashcard { height: 260px; }
+  .flashcard { height: 300px; }
   .fc-front, .fc-back {
-    font-size: 18px;
-    padding: 24px;
+    font-size: 20px;
+    padding: 28px;
   }
 
   .fc-actions {
@@ -1027,40 +1040,52 @@ input:focus, textarea:focus, select:focus {
     grid-template-columns: 1fr;
   }
 
-  .speed-player b { font-size: 42px; }
+  .speed-player b { font-size: 48px; }
 
   .memory-grid {
-    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-    gap: 12px;
+    grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+    gap: 14px;
   }
 
-  .memory-card::before { font-size: 32px; }
+  .memory-card::before { font-size: 38px; }
 
-  .chat-card { height: 70vh; }
+  .chat-card { height: 72vh; }
 
   .msg {
-    font-size: 15px;
-    padding: 14px 18px;
+    font-size: 16px;
+    padding: 16px 20px;
   }
 
   .snake-mobile-controls { display: flex; }
 
   .snake-mobile-controls button {
-    width: 64px;
-    height: 64px;
-    font-size: 24px;
+    width: 76px;
+    height: 76px;
+    font-size: 30px;
   }
 
-  .combo-popup { font-size: 56px; }
+  .combo-popup { font-size: 72px; }
+
+  .modal-content {
+    padding: 28px 22px;
+  }
+
+  .modal-content h3 { font-size: 20px; }
+
+  .snake-option-btn {
+    padding: 18px 20px;
+    font-size: 17px;
+  }
 }
 
 @media (max-width: 480px) {
-  .card h2 { font-size: 22px; }
-  .score { font-size: 48px; }
-  .rank-badge { font-size: 18px; }
+  html { font-size: 16px; }
+  .card h2 { font-size: 24px; }
+  .score { font-size: 52px; }
+  .rank-badge { font-size: 20px; }
 
   .nav-btn {
-    padding: 8px 12px;
-    font-size: 13px;
+    padding: 10px 14px;
+    font-size: 14px;
   }
 }
